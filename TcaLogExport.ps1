@@ -32,6 +32,7 @@ function Get-TcaLog {
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
 
         "-" * 100
+        "`n`n"
 
         $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
         foreach ($TcaDayLog in $TcaDayLogs) {
