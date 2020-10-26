@@ -36,16 +36,11 @@ function Get-TcaLog {
     }
 }
 
-
 Write-Host 
 "*********************************
 ***    TcaLogs tools V2.1     ***
-*********************************
-
-
-"
+*********************************`n`n"
 Write-Host "Starting extract TcaLogs" -ForegroundColor Yellow -BackgroundColor Black
-
 
 $flag = Read-Host "Y/y for Yes, N/n for Quit"
 
@@ -58,17 +53,12 @@ if ($flag -ne "N" -and $flag -ne "n"){
 
 $FormatVar = 0
 while (1) {
-
     if ($FormatVar -ge 1) {
-        write-host	"
-        
-        "
+        write-host	"`n`n"
     }
     $FormatVar ++
     #选择要输入的Log类型
-    "
-    
-    "
+    "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
     "1 : ActionsLog`n2 : ErrorMessages`n3 : BypassTagLogs`n4 : Quit"
     $Select = read-host ">>"
@@ -124,8 +114,6 @@ while (1) {
             Rename-Item -Path $ToRenameLog.FullName -NewName $NewFileName
         }
         "-" * 100
-        "
-        
-        "
+        "`n`n"
     } 
 }
