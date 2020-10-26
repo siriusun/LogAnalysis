@@ -22,8 +22,8 @@ function New-Folder ($FolderName) {
     New-Item -Path $Pth -ItemType Directory -Name $FolderName
 }
 
-function Get-TcaLog ($Ext) {
-    $TcaLogs = Get-ChildItem -Path $Pth -Filter $Ext
+function Get-TcaLog {
+    $TcaLogs = Get-ChildItem -Path $Pth | Where-Object {$_.Extension -like ".zip" -or $_.Extension -like ".rar"}
     foreach ($TcaLog in $TcaLogs) {
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
@@ -53,8 +53,7 @@ if ($flag -ne "N" -and $flag -ne "n"){
     New-Folder("TcaLogTemp")
     New-Folder("TcaLogs")
 
-    Get-TcaLog("*.rar")
-    Get-TcaLog("*.zip")
+    Get-TcaLog
 }
 
 $FormatVar = 0
