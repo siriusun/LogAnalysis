@@ -98,6 +98,7 @@ while (1) {
     $flag = 0
     foreach ($ZipLog in $LogsFileZips) {
         "-" * 100
+        Write-Host "Start to Extract File:"
 
         #7z命令如下：
         $7zComTxt = "-o" + $Pth + "\" + $LogFoldName + "\"
