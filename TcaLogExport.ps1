@@ -25,8 +25,13 @@ function New-Folder ($FolderName) {
 function Get-TcaLog {
     $TcaLogs = Get-ChildItem -Path $Pth | Where-Object {$_.Extension -like ".zip" -or $_.Extension -like ".rar"}
     foreach ($TcaLog in $TcaLogs) {
+        "-" * 100
+        Write-Host "Start to Extract File:"
+
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
+
+        "-" * 100
 
         $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
         foreach ($TcaDayLog in $TcaDayLogs) {
@@ -97,6 +102,9 @@ while (1) {
         $7zComTxt = "-o" + $Pth + "\" + $LogFoldName + "\"
         7z.exe e  $ZipLog.FullName $7zComTxt $LogTxt
 
+        "-" * 100
+        "`n`n"
+
         $ToRenameLogs = Get-ChildItem -Recurse -Path $Pth -Filter $LogTxt
         if ($null -eq $ToRenameLogs) {
             continue
@@ -113,7 +121,5 @@ while (1) {
             }
             Rename-Item -Path $ToRenameLog.FullName -NewName $NewFileName
         }
-        "-" * 100
-        "`n`n"
     } 
 }
