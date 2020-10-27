@@ -53,7 +53,6 @@ $flag = Read-Host "Y/y for Yes, N/n for Quit"
 if ($flag -ne "N" -and $flag -ne "n"){
     New-Folder("TcaLogTemp")
     New-Folder("TcaLogs")
-
     Get-TcaLog
 }
 
