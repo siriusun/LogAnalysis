@@ -28,8 +28,7 @@ function Get-TopLogs {
 }
 
 function Move-BadLogs {
-    $PathArray = (Split-Path -Parent $ZipTopLog.FullName).Split("\")
-    $Dest = $pth.ToString() + "\BadLogs\" + $PathArray[$PathArray.Length - 1 ] + "_" + $ZipTopLog.Name.ToString()
+    $Dest = $pth.ToString() + "\BadLogs\" + $ZipTopLog.Directory.Name.ToString() + "_" + $ZipTopLog.Name.ToString()
     Move-Item -Path $ZipTopLog.FullName -Destination $Dest
 }
 
