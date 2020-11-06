@@ -14,15 +14,18 @@ function New-Folder {
 }
 
 function Get-TopLogs {
-	$CmprFiles = Get-ChildItem -Path $pth | Where-Object {$_.Extension -like ".rar" -or $_.Extension -like ".zip"}
+    $CmprFiles = Get-ChildItem -Path $pth | Where-Object {$_.Extension -like ".rar" -or $_.Extension -like ".zip"}
+    $CmprFilesNum = $CmprFiles.Length
+    $Step1 = 0
     if ($null -ne $CmprFiles) { 
         foreach ($CmprFile in $CmprFiles) {
             "-" * 100
-            Write-Host (">>>>: " + $CmprFile.FullName)
+            Write-Host (">>>>: " + ($CmprFilesNum - $Step1).ToString() + "  " + $CmprFile.FullName) -BackgroundColor Black -ForegroundColor Yellow
             $CmprPath = "-o" + $pth + "\SourceLogs\" + $CmprFile.Name.Split(".")[0] + "\"
             7z.exe e $CmprFile.FullName $CmprPath -r *DBX*.zip -aos
             "-" * 100
             "`n`n"
+            $Step1 ++
         }
     }
 }
@@ -77,11 +80,12 @@ foreach ($ZipTopLog in $AllZipTopLogs) {
 }
 
 $k = 0
+$Step2 = 0
 foreach ($Sn in $TopHash.Keys) {
     $k ++
     "-" * 100
     $TopLog = (Get-ChildItem -Recurse -Path ($pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
-    Write-Host (">>>>: " + $TopLog.FullName)
+    Write-Host (">>>>: " + ($TopHash.Count - $Step2).ToString() + "  " + $TopLog.FullName) -BackgroundColor Black -ForegroundColor Yellow
     $NameWithSN = $k.ToString() + "_" + $Sn + "_" + $TopLog.Name.Split("_")[7] + ".txt"
     
     $7zComTxt = "-o" + $pth + "\GeneralLogs\"
@@ -89,6 +93,7 @@ foreach ($Sn in $TopHash.Keys) {
     Rename-Item -Path (Get-ChildItem -Path $pth -Recurse -Filter GeneralLog.txt).FullName -NewName $NameWithSN
     "-" * 100
     "`n`n"
+    $Step2 ++
 }
 
 "`n`n"
