@@ -1,5 +1,5 @@
 $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$GeneralLogs = Get-ChildItem -Path ($Pth + "\GeneralLogs\" -Filter *.txt
+$GeneralLogs = Get-ChildItem -Path ($Pth + "\GeneralLogs\") -Filter *.txt
 
 foreach ($GeneralLog in $GeneralLogs){
 	$GeneralLog.FullName.ToString()
