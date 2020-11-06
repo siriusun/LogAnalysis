@@ -8,7 +8,7 @@ Set-Location $Pth
 #给所有的LOG加上序号
 $PreTcaLogs = Get-ChildItem -Path $Pth -Filter TCALOG_167*
 $Order = 1
-foreach ($PreTcaLog in $PreTcaLogs){
+foreach ($PreTcaLog in $PreTcaLogs) {
     $NewSortName = $Order.ToString() + "_" + $PreTcaLog.Name
     Rename-Item -Path $PreTcaLog.FullName -NewName $NewSortName
     $Order++
@@ -23,10 +23,10 @@ function New-Folder ($FolderName) {
 }
 
 function Get-TcaLog {
-    $TcaLogs = Get-ChildItem -Path $Pth | Where-Object {$_.Extension -like ".zip" -or $_.Extension -like ".rar"}
+    $TcaLogs = Get-ChildItem -Path $Pth | Where-Object { $_.Extension -like ".zip" -or $_.Extension -like ".rar" } | Sort-Object -Descending
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
-        Write-Host "Start to Extract File:"
+        Write-Host ("Start to Extract File :  " + $TcaLog.Name.Split("_")[0]) -BackgroundColor Black -ForegroundColor Yellow
 
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
@@ -50,7 +50,7 @@ Write-Host "Starting extract TcaLogs" -ForegroundColor Yellow -BackgroundColor B
 
 $flag = Read-Host "Y/y for Yes, N/n for Quit"
 
-if ($flag -ne "N" -and $flag -ne "n"){
+if ($flag -ne "N" -and $flag -ne "n") {
     New-Folder("TcaLogTemp")
     New-Folder("TcaLogs")
     Get-TcaLog
@@ -94,10 +94,12 @@ while (1) {
     New-Folder($LogFoldName)
 
     $LogsFileZips = Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip
+    $LogNum = $LogsFileZips.Length
     $flag = 0
+    $Step = 0
     foreach ($ZipLog in $LogsFileZips) {
         "-" * 100
-        Write-Host "Start to Extract File:"
+        Write-Host ("Start to Extract File :  " + ($LogNum - $Step).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
         #7z命令如下：
         $7zComTxt = "-o" + $Pth + "\" + $LogFoldName + "\"
@@ -105,7 +107,7 @@ while (1) {
 
         "-" * 100
         "`n`n"
-
+        $Step ++
         $ToRenameLogs = Get-ChildItem -Recurse -Path $Pth -Filter $LogTxt
         if ($null -eq $ToRenameLogs) {
             continue
