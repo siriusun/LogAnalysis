@@ -24,16 +24,17 @@ function New-Folder ($FolderName) {
 
 function Get-TcaLog {
     $TcaLogs = Get-ChildItem -Path $Pth | Where-Object { $_.Extension -like ".zip" -or $_.Extension -like ".rar" } | Sort-Object -Descending
+    $Step1 = 0
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
-        Write-Host ("Start to Extract File :  " + $TcaLog.Name.Split("_")[0]) -BackgroundColor Black -ForegroundColor Yellow
+        Write-Host ("Start to Extract File :  " + ($TcaLogs.Length - $Step1).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
 
         "-" * 100
         "`n`n"
-
+        $Step1 ++
         $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
         foreach ($TcaDayLog in $TcaDayLogs) {
             $NewName = $Pth.ToString() + "\TcaLogs\" + $TcaLog.Name.Split(".")[0] + "_" + $TcaDayLog.Name
@@ -94,12 +95,11 @@ while (1) {
     New-Folder($LogFoldName)
 
     $LogsFileZips = Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip
-    $LogNum = $LogsFileZips.Length
     $flag = 0
-    $Step = 0
+    $Step2 = 0
     foreach ($ZipLog in $LogsFileZips) {
         "-" * 100
-        Write-Host ("Start to Extract File :  " + ($LogNum - $Step).ToString()) -BackgroundColor Black -ForegroundColor Yellow
+        Write-Host ("Start to Extract File :  " + ($LogsFileZips.Length - $Step2).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
         #7z命令如下：
         $7zComTxt = "-o" + $Pth + "\" + $LogFoldName + "\"
@@ -107,7 +107,7 @@ while (1) {
 
         "-" * 100
         "`n`n"
-        $Step ++
+        $Step2 ++
         $ToRenameLogs = Get-ChildItem -Recurse -Path $Pth -Filter $LogTxt
         if ($null -eq $ToRenameLogs) {
             continue
