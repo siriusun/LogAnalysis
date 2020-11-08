@@ -27,7 +27,7 @@ function Get-TcaLog {
     $Step1 = 0
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
-        Write-Host ("Start to Extract File :  " + ($TcaLogs.Length - $Step1).ToString()) -BackgroundColor Black -ForegroundColor Yellow
+        Write-Host ("Start to Extract File :  " + ($TcaLogs.Count - $Step1).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
@@ -99,7 +99,7 @@ while (1) {
     $Step2 = 0
     foreach ($ZipLog in $LogsFileZips) {
         "-" * 100
-        Write-Host ("Start to Extract File :  " + ($LogsFileZips.Length - $Step2).ToString()) -BackgroundColor Black -ForegroundColor Yellow
+        Write-Host ("Start to Extract File :  " + ($LogsFileZips.Count - $Step2).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
         #7z命令如下：
         $7zComTxt = "-o" + $Pth + "\" + $LogFoldName + "\"
