@@ -14,7 +14,7 @@ function New-Folder {
 }
 
 function Get-TopLogs {
-    $CmprFiles = Get-ChildItem -Path $pth | Where-Object {$_.Extension -like ".rar" -or $_.Extension -like ".zip"}
+    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip"}
     $Step1 = 0
     if ($null -ne $CmprFiles) { 
         foreach ($CmprFile in $CmprFiles) {
