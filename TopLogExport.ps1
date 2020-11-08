@@ -14,12 +14,12 @@ function New-Folder {
 }
 
 function Get-TopLogs {
-    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip"}
+    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip"}
     $Step1 = 0
     if ($null -ne $CmprFiles) { 
         foreach ($CmprFile in $CmprFiles) {
             "-" * 100
-            Write-Host (">>>>: " + ($CmprFilesNum.Count - $Step1).ToString() + "  " + $CmprFile.FullName) -BackgroundColor Black -ForegroundColor Yellow
+            Write-Host (">>>>: " + ($CmprFiles.Count - $Step1).ToString() + "  " + $CmprFile.FullName) -BackgroundColor Black -ForegroundColor Yellow
             $CmprPath = "-o" + $pth + "\SourceLogs\" + $CmprFile.Name.Split(".")[0] + "\"
             7z.exe e $CmprFile.FullName $CmprPath -r *DBX*.zip -aos
             "-" * 100
@@ -46,7 +46,7 @@ if ($flag -eq "N" -or $flag -eq "n"){
     Exit
 }
 
-$CmprFiles1 = Get-ChildItem *.[zr][ia][pr]
+$CmprFiles1 = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" }
 if ($null -eq $CmprFiles1){
     "No log files found. Any Key to Exit..."
     [System.Console]::ReadKey() | Out-Null ; Exit
