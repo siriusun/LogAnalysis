@@ -23,7 +23,7 @@ function New-Folder ($FolderName) {
 }
 
 function Get-TcaLog {
-    $TcaLogs = Get-ChildItem -Path $Pth | Where-Object { $_.Extension -like ".zip" -or $_.Extension -like ".rar" } | Sort-Object -Descending
+    $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".zip" -or $_.Extension -like ".rar" } | Sort-Object -Descending
     $Step1 = 0
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
