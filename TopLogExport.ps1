@@ -55,6 +55,7 @@ if ($null -eq $CmprFiles1){
 New-Folder("SourceLogs")
 New-Folder("GeneralLogs")
 New-Folder("BadLogs")
+New-Folder("ProDX")
 
 Get-TopLogs
 
@@ -90,6 +91,7 @@ foreach ($Sn in $TopHash.Keys) {
     $7zComTxt = "-o" + $pth + "\GeneralLogs\"
     7z.exe e $TopLog.FullName -pfixmeplease $7zComTxt GeneralLog.txt -aos
     Rename-Item -Path (Get-ChildItem -Path $pth -Recurse -Filter GeneralLog.txt).FullName -NewName $NameWithSN
+    Move-Item -Path $TopLog.FullName -Destination ($pth.ToString() + "\ProDX\")
     "-" * 100
     "`n`n"
     $Step2 ++
