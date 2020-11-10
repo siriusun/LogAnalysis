@@ -95,7 +95,8 @@ foreach ($Sn in $TopHash.Keys) {
     $Step2 ++
 }
 
-"`n`n"
+Write-Host ((Get-ChildItem -Path ($pth.ToString() + "\BadLogs\")).Count.ToString()  + " bad logs" + " "*100) -BackgroundColor Black -ForegroundColor Yellow
+"`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
 "Any Key to Exit..."
 [System.Console]::ReadKey() | Out-Null ; Exit
