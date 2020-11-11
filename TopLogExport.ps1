@@ -14,7 +14,7 @@ function New-Folder {
 }
 
 function Get-TopLogs {
-    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip"}
+    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z"}
     $Step1 = 0
     if ($null -ne $CmprFiles) { 
         foreach ($CmprFile in $CmprFiles) {
@@ -46,7 +46,7 @@ if ($flag -eq "N" -or $flag -eq "n"){
     Exit
 }
 
-$CmprFiles1 = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" }
+$CmprFiles1 = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z" }
 if ($null -eq $CmprFiles1){
     "No log files found. Any Key to Exit..."
     [System.Console]::ReadKey() | Out-Null ; Exit
