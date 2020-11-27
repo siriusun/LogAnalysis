@@ -66,7 +66,7 @@ while (1) {
     #选择要输入的Log类型
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : ActionsLog`n2 : ErrorMessages`n3 : BypassTagLogs`n4 : Quit"
+    "1 : ActionsLog`n2 : ErrorMessages`n3 : BypassTagLogs`n4 : LasPcLogs`n5 : Quit"
     $Select = read-host ">>"
 
     #定义要查找Log关键字
@@ -80,6 +80,9 @@ while (1) {
         $LogTxt = "M21*ACLT_TAG.log"
     }
     elseif ($Select -eq 4) {
+        $LogTxt = "LASPC?.log"
+    }
+	elseif ($Select -eq 5) {
         Exit
     }
     else {
@@ -88,7 +91,7 @@ while (1) {
     }
 
     #创建Log类型哈希表
-    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs" }
+    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs"; "4" = "LasPcLogs"}
     $LogFoldName = $SelectTable[$Select]
 
     #创建Log输出文件夹
