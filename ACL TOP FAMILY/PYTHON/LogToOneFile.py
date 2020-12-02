@@ -1,6 +1,25 @@
 import pandas as pd
 import os
 
+logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\GeneralLogs"
+colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
+loglist = file_filter(logpath, ".txt")
+replace_dic = {
+    "开机": "Power up",
+    "初始化": "Initializing",
+    "维护": "Maintenance",
+    "错误": "Error",
+    "紧急停止": "Emergency stop",
+    "忙": "Busy",
+    "诊断": "Diagnostics",
+    "准备": "Ready",
+    "受控停机": "Controlled stop",
+    "未连接": "Not connected",
+    "温度调整": "Adjusting thermal",
+    "分析仪状态从": "Analyzer Status changed from",
+    "变为": "to"
+}
+
 
 def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
@@ -23,40 +42,22 @@ def logaddsq(logfullpath, filter_col):
                         sep="\t",
                         encoding="utf-16",
                         usecols=filter_col)
+    tlog0 = tlog0.dropna(axis=0, how="any")
     tlog0["sDescription"] = tlog0["sDescription"].apply(replace_desp)
     tlog1 = pd.read_csv(logfullpath,
                         sep="\t",
                         encoding="utf-16",
                         usecols=filter_col)
+    tlog1 = tlog1.dropna(axis=0, how="any")
     tlog1["sDescription"] = tlog1["sDescription"].apply(replace_desp)
     tlog1.index = tlog1.index + 1
     logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
     return logwithsq
 
 
-logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\GeneralLogs"
-colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
-loglist = file_filter(logpath, ".txt")
-replace_dic = {
-    "开机": "Power up",
-    "初始化": "Initializing",
-    "维护": "Maintenance",
-    "错误": "Error",
-    "紧急停止": "Emergency stop",
-    "忙": "Busy",
-    "诊断": "Diagnostics",
-    "准备": "Ready",
-    "受控停机": "Controlled stop",
-    "未连接": "Not connected",
-    "温度调整": "Adjusting thermal",
-    "分析仪状态从": "Analyzer Status changed from",
-    "变为": "to"
-}
-
 for i in range(len(loglist)):
     print("Starting load file :{}".format(i))
     logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter)
-    logtemp = logtemp.dropna(axis=0, how="any")
     logtemp = logtemp[(
         (logtemp.eType_x == "ERROR") | (logtemp.eType_x == "INFORMATION"))
                       & ((logtemp.funcArea_x == "Analyzer")
