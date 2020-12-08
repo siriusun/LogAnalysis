@@ -6,14 +6,21 @@ $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
 
 #给所有的LOG加上序号
+<#
 $PreTcaLogs = Get-ChildItem -Path $Pth -Filter TCALOG_167*
-$Order = 1
+
 foreach ($PreTcaLog in $PreTcaLogs) {
+    if ($PreTcaLog.Name.Split("_")[1] -contains "_"){
+        $Order = $PreTcaLog.Name.Split("_")[1][-3..-1]
+    }
+    else {
+        $Order = $PreTcaLog.Name.Split("_")[1][-2..-1]
+    }
     $NewSortName = $Order.ToString() + "_" + $PreTcaLog.Name
     Rename-Item -Path $PreTcaLog.FullName -NewName $NewSortName
     $Order++
 }
-
+#>
 #Fuction
 function New-Folder ($FolderName) {
     if (Test-Path $FolderName) {

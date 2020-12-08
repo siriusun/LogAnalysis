@@ -3,7 +3,6 @@ import os
 
 logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\GeneralLogs"
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
-loglist = file_filter(logpath, ".txt")
 replace_dic = {
     "开机": "Power up",
     "初始化": "Initializing",
@@ -55,6 +54,7 @@ def logaddsq(logfullpath, filter_col):
     return logwithsq
 
 
+loglist = file_filter(logpath, ".txt")
 for i in range(len(loglist)):
     print("Starting load file :{}".format(i))
     logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter)
