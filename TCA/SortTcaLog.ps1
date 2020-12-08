@@ -2,13 +2,17 @@ $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
 
 $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") -Filter TCALOG_167*
-[Int64]$Flag = Read-Host "Please input start order number :"
 
 foreach ($TcaLog in $TcaLogs){
-    $NewSortName = $Flag.ToString() + "_" + $TcaLog.Name
+    if ($TcaLog.Name.Split("_")[1][-5] -eq "-") {
+        $Order = -join $TcaLog.Name.Split("_")[1][-4..-1]
+    }
+    else {
+        $Order = -join $TcaLog.Name.Split("_")[1][-2..-1]
+    }
+    $NewSortName = $Order.ToString() + "_" + $TcaLog.Name
     Write-Host $TcaLog.FullName
     Rename-Item -Path $TcaLog.FullName -NewName $NewSortName
-    $Flag ++
 }
 "Any Key to Exit..."
 [System.Console]::ReadKey() | Out-Null ; Exit
