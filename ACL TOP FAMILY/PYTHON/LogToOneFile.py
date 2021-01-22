@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\GeneralLogs"
+logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\Data\GeneralLogs"
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
     "开机": "Power up",
