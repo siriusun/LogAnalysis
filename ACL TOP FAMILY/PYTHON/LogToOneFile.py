@@ -62,6 +62,26 @@ for i in range(len(loglist)):
         (logtemp.eType_x == "ERROR") | (logtemp.eType_x == "INFORMATION"))
                       & ((logtemp.funcArea_x == "Analyzer")
                          | (logtemp.funcArea_x == "Materials"))]
+    logtemp = logtemp[
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Ready to Maintenance.")
+        & (logtemp.sDescription_x !=
+           "Analyzer Status changed from Maintenance to Ready.")
+        & (logtemp.sDescription_x !=
+           "Analyzer Status changed from Ready to Busy.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Busy to Ready.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Not connected to Power up.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Power up to Initializing.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Initializing to Adjusting thermal.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Adjusting thermal to Ready.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Ready to Initializing.")]
+    logtemp = logtemp[logtemp.sCode_x != "'03218"]
     logtemp["TopSn"] = loglist[i][:-4]
     if i == 0:
         logonefile = logtemp
