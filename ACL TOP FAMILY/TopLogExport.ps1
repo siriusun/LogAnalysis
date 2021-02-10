@@ -79,14 +79,12 @@ foreach ($ZipTopLog in $AllZipTopLogs) {
     $TopHash[$ZipTopLog.Name.Split("_")[3]] = $i
 }
 
-$k = 0
 $Step2 = 0
 foreach ($Sn in $TopHash.Keys) {
-    $k ++
     "-" * 100
     $TopLog = (Get-ChildItem -Recurse -Path ($pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
     Write-Host (">>>>: " + ($TopHash.Count - $Step2).ToString() + "  " + $TopLog.FullName) -BackgroundColor Black -ForegroundColor Yellow
-    $NameWithSN = $k.ToString() + "_" + $Sn + "_" + $TopLog.Name.Split("_")[7] + ".txt"
+    $NameWithSN = $TopLog.Name.Split("_")[7] + "_" + $Sn + ".txt"
     
     $7zComTxt = "-o" + $pth + "\GeneralLogs\"
     7z.exe e $TopLog.FullName -pfixmeplease $7zComTxt GeneralLog.txt -aos
