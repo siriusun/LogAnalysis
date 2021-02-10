@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202010\Data\GeneralLogs"
+logpath = r"D:\LogAnalysis\AllWerfenChinaTop\202101\Data\GeneralLogs"
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
     "开机": "Power up",
@@ -16,7 +16,10 @@ replace_dic = {
     "未连接": "Not connected",
     "温度调整": "Adjusting thermal",
     "分析仪状态从": "Analyzer Status changed from",
-    "变为": "to"
+    "变为": "to",
+    "样品": "SAMPLE",
+    "试剂1": "REAGENT 1",
+    "试剂2": "REAGENT 2"
 }
 
 
@@ -66,9 +69,9 @@ for i in range(len(loglist)):
         (logtemp.sDescription_x !=
          "Analyzer Status changed from Ready to Maintenance.")
         & (logtemp.sDescription_x !=
-           "Analyzer Status changed from Maintenance to Ready.")
-        & (logtemp.sDescription_x !=
-           "Analyzer Status changed from Ready to Busy.") &
+           "Analyzer Status changed from Maintenance to Ready.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Ready to Busy.") &
         (logtemp.sDescription_x !=
          "Analyzer Status changed from Busy to Ready.") &
         (logtemp.sDescription_x !=
@@ -80,8 +83,28 @@ for i in range(len(loglist)):
         (logtemp.sDescription_x !=
          "Analyzer Status changed from Adjusting thermal to Ready.") &
         (logtemp.sDescription_x !=
-         "Analyzer Status changed from Ready to Initializing.")]
-    logtemp = logtemp[logtemp.sCode_x != "'03218"]
+         "Analyzer Status changed from Ready to Initializing.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Busy to Controlled stop.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Controlled stop to Busy.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Emergency stop to Not connected.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Error to Ready.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Ready to Error.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Diagnostics to Emergency stop.") &
+        (logtemp.sDescription_x !=
+         "Analyzer Status changed from Power up to Diagnostics.")]
+    logtemp = logtemp[(logtemp.sCode_x != "'03218")
+                      & (logtemp.sCode_x != "'03004") &
+                      (logtemp.sCode_x != "'02083") &
+                      (logtemp.sCode_x != "'02025") &
+                      (logtemp.sCode_x != "'03215") &
+                      (logtemp.sCode_x != "'03188") &
+                      (logtemp.sCode_x != "'02055")]
     logtemp["TopSn"] = loglist[i][:-4]
     if i == 0:
         logonefile = logtemp
