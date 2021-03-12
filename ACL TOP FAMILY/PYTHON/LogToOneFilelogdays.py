@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\IndirectService202103\Data\tt"
+logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\IndirectService202103\Data\TT"
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
     "开机": "Power up",
@@ -38,7 +38,8 @@ def replace_desp(desp):
     return desp
 
 
-def logaddsq(logfullpath, filter_col,log_days):
+def logaddsq(logfullpath, filter_col,
+             log_days):  #log_days为0，则保留全部日志，传入数字，保留固定天数日志。
     print(logfullpath)
     tlog0 = pd.read_csv(logfullpath,
                         sep="\t",
@@ -55,16 +56,17 @@ def logaddsq(logfullpath, filter_col,log_days):
     tlog1.index = tlog1.index + 1
     logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
     log_gen_time = pd.to_datetime(logwithsq.iloc[-1, 2])
-    logwithsq["log_days"] = (log_gen_time - pd.to_datetime(logwithsq["dateTime_x"])
-              ) / pd.Timedelta(1, "d") - log_days < 0
-    logwithsq = logwithsq[logwithsq.log_days == True]
+    if log_days != 0:
+        logwithsq["log_days"] = (log_gen_time - pd.to_datetime(logwithsq["dateTime_x"])
+                ) / pd.Timedelta(1, "d") - log_days < 0
+        logwithsq = logwithsq[logwithsq.log_days == True]
     return logwithsq
 
 
 loglist = file_filter(logpath, ".txt")
 for i in range(len(loglist)):
     print("Starting load file :{}".format(i))
-    logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter,90)
+    logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter,90) #最后参数为0，则保留全部日志，填写数字，保留固定天数日志。
     logtemp = logtemp[(
         (logtemp.eType_x == "ERROR") | (logtemp.eType_x == "INFORMATION"))
                       & ((logtemp.funcArea_x == "Analyzer")
@@ -74,8 +76,6 @@ for i in range(len(loglist)):
          "Analyzer Status changed from Ready to Maintenance.")
         & (logtemp.sDescription_x !=
            "Analyzer Status changed from Maintenance to Ready.") &
-        (logtemp.sDescription_x !=
-         "Analyzer Status changed from Ready to Busy.") &
         (logtemp.sDescription_x !=
          "Analyzer Status changed from Busy to Ready.") &
         (logtemp.sDescription_x !=
