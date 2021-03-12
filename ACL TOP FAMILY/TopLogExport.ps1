@@ -90,7 +90,7 @@ While (1){
     #选择要输入的Log类型
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : generalLog`n2 : countersForAllTest`n3 : instrumentStatusStatistics`n4 : Quit"
+    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : Quit"
     $Select = read-host ">>"
 
     #定义要查找Log关键字
@@ -112,7 +112,7 @@ While (1){
     }
 
     #创建Log类型哈希表
-    $SelectTable = @{"1" = "generalLog"; "2" = "countersForAllTest"; "3" = "instrumentStatus"}
+    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"}
     $LogFoldName = $SelectTable[$Select]
 
     #创建Log输出文件夹
