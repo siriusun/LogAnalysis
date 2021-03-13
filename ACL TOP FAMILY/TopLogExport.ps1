@@ -42,7 +42,7 @@ Write-Host
 
 Write-Host "Starting to decompress Source TopLogs?" -ForegroundColor Yellow -BackgroundColor Black
 
-$flag = Read-Host "Y/y for Yes, N/n for Next step"
+$flag = Read-Host "Y/y for Yes, N/n for Next stepï¼š"
 if ($flag -eq "Y" -or $flag -eq "y"){
 
     $CmprFiles1 = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z" }
@@ -54,7 +54,6 @@ if ($flag -eq "Y" -or $flag -eq "y"){
     New-Folder("SourceLogs")
     New-Folder("BadLogs")
     
-
     Get-TopLogs
 
     $TopHash = @{}
@@ -70,7 +69,6 @@ if ($flag -eq "Y" -or $flag -eq "y"){
             Move-BadLogs
         }
     }
-
 }
 
 if ($flag -eq "Y" -or $flag -eq "y"){
@@ -87,13 +85,13 @@ While (1){
         write-host	"`n`n"
     }
     $FormatVar ++
-    #Ñ¡ÔñÒªÊäÈëµÄLogÀàĞÍ
+    #é€‰æ‹©è¦è¾“å…¥çš„Logç±»å‹
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
     "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : Quit"
     $Select = read-host ">>"
 
-    #¶¨ÒåÒª²éÕÒLog¹Ø¼ü×Ö
+    #å®šä¹‰è¦æŸ¥æ‰¾Logå…³é”®å­—
     if ($Select -eq 1) {
         $LogTxt = "generalLog.txt"
     }
@@ -107,17 +105,16 @@ While (1){
         break
     }
     else {
-        Write-Host "ÇëÕıÈ·ÊäÈë!!!"
+        Write-Host "è¯·æ­£ç¡®è¾“å…¥!!!"
         Continue
     }
 
-    #´´½¨LogÀàĞÍ¹şÏ£±í
+    #åˆ›å»ºLogç±»å‹å“ˆå¸Œè¡¨
     $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"}
     $LogFoldName = $SelectTable[$Select]
 
-    #´´½¨LogÊä³öÎÄ¼ş¼Ğ
+    #åˆ›å»ºLogè¾“å‡ºæ–‡ä»¶å¤¹
     New-Folder($LogFoldName)
-
 
     $AllZipTopLogs = Get-ChildItem -Path ($pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
     $i = 0
