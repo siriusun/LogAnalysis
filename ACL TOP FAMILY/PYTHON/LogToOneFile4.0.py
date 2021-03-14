@@ -43,7 +43,6 @@ Filter_List_sCode = [
 
 Filter_List_funcArea = ["Analyzer", "Materials"]
 
-
 def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
     targetfiles = []
@@ -91,7 +90,6 @@ def logaddsq(logfullpath, filter_col,
                 ) / pd.Timedelta(1, "d") - log_days < 0
         logwithsq = logwithsq[logwithsq.log_days == True]
     return logwithsq
-
 
 loglist = file_filter(logpath, ".txt")
 for i in range(len(loglist)):
