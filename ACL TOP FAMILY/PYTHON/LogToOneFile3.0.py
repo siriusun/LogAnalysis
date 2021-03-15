@@ -119,9 +119,10 @@ logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
 logonefile["Timediff<10s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                           if x < 10 else "N")
-logonefile.drop(["eTypeSQ", "funcAreaSQ"], axis=1, inplace=True)
+logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ"], axis=1, inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
 logonefile["log_days"] = peroid
 logonefile.to_csv((logpath + "\\one.csv"))
 print("Done")
+
 print(dt.datetime.now() - start)
