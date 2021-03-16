@@ -6,7 +6,7 @@ import datetime as dt
 start = dt.datetime.now()
 
 #logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\202102\Data\GeneralLogs"
-logpath = ".\\GeneralLogs"
+logpath = os.getcwd() + "\\GeneralLogs"
 peroid = 0 #日志保留天数,0则全部保留
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
