@@ -6,7 +6,7 @@ import datetime as dt
 start = dt.datetime.now()
 
 #logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\202102\Data\GeneralLogs"
-logpath = os.getcwd() + "\\GeneralLogs"
+logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
 peroid = 0 #日志保留天数,0则全部保留
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
@@ -70,7 +70,7 @@ def logaddsq(logfullpath, filter_col,
     print(logfullpath)
     tlog0 = pd.read_csv(logfullpath,
                         sep="\t",
-                        encoding="utf-16",
+                        encoding="utf_16_le",
                         usecols=filter_col)
     tlog0 = tlog0.dropna(axis=0, how="any")
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
