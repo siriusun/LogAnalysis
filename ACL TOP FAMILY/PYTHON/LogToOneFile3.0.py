@@ -5,7 +5,7 @@ import datetime as dt
 
 start = dt.datetime.now()
 
-#logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\202102\Data\GeneralLogs"
+#logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\202103\Data\GeneralLogs"
 logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
 peroid = 0 #日志保留天数,0则全部保留
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
@@ -43,6 +43,8 @@ Filter_List_sCode = [
 ]
 
 Filter_List_funcArea = ["Analyzer", "Materials"]
+Filter_List_eType = ["ERROR", "INFORMATION"]
+
 
 def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
@@ -59,11 +61,11 @@ def info_filter(infostr):
         return "N"
 
 def replace_desp(desp):
-    if "分析仪状态从" in desp:
-        for (cn, en) in replace_dic.items():
-            desp = desp.replace(cn, en)
+    if "分析仪状态从" != desp[0:6]:
+        return desp
+    for (cn, en) in replace_dic.items():
+        desp = desp.replace(cn, en)
     return desp
-
 
 def logaddsq(logfullpath, filter_col,
              log_days):  #log_days为0，则保留全部日志，传入数字，保留固定天数日志。
@@ -75,12 +77,12 @@ def logaddsq(logfullpath, filter_col,
     tlog0 = tlog0.dropna(axis=0, how="any")
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
     #筛选掉无用数据
-    tlog0 = tlog0[tlog0.funcArea.isin(Filter_List_funcArea)]
+    tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
+                  & (tlog0.eType.isin(Filter_List_eType))]
     tlog0["sDescription"] = tlog0["sDescription"].apply(replace_desp)
-    tlog0["Info_Desp"] = (tlog0["eType"] + ":" + tlog0["sDescription"])
-    tlog0["Info_Desp"] = tlog0["Info_Desp"].apply(info_filter)
-    tlog0 = tlog0[tlog0.Info_Desp == "Y"]
-    tlog0.pop("Info_Desp")
+    tlog0 = tlog0[(tlog0.eType == "ERROR")
+                  | ((tlog0.eType == "INFORMATION")
+                     & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
     tlog0.reset_index(drop=True,inplace=True)
     tlog1 = cp.copy(tlog0)
