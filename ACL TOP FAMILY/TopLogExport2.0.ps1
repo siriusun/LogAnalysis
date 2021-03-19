@@ -70,7 +70,7 @@ While (1) {
     #Select the log type
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : Quit"
+    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : sw_all_versions`n5 : Quit"
     $Select = read-host ">>"
 
     #define the keyword to generate log
@@ -84,15 +84,18 @@ While (1) {
         $LogTxt = "instrumentStatusStatistics.txt"
     }
     elseif ($Select -eq 4) {
+        $LogTxt = "sw_all_versions.txt"
+    }
+    elseif ($Select -eq 5) {
         break
     }
     else {
-        Write-Host "Please input number 1-4"
+        Write-Host "Please input number 1-5"
         Continue
     }
 
     #create the logtype hashtable
-    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus" }
+    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"; "4" = "SoftwareVersions"}
     $txt_toplog_folder = $SelectTable[$Select]
 
     #create the output folder
@@ -117,7 +120,8 @@ While (1) {
 
         #7z decompress the DBX file to txt_toplog_folder
         7z.exe e $toplog_DBX.FullName -pfixmeplease $text_toplog_fullpath $LogTxt -aos
-        Rename-Item -Path (Get-ChildItem -Path $work_pth -Recurse -Filter $LogTxt).FullName -NewName $toplog_date_SN
+        $rename_source = Get-ChildItem -Path "$work_pth\$txt_toplog_folder" -Recurse -Filter $LogTxt
+        Rename-Item -Path $rename_source.FullName -NewName $toplog_date_SN
         if (!(Test-Path ($work_pth.ToString() + "\ProDX\" + $toplog_DBX.Name))) {
             Copy-Item -Path $toplog_DBX.FullName -Destination ($work_pth.ToString() + "\ProDX\")
         }
