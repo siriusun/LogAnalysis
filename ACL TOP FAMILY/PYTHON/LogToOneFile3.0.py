@@ -3,10 +3,14 @@ import copy as cp
 import os
 import datetime as dt
 
-start = dt.datetime.now()
-
-#logpath = r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\202103\Data\GeneralLogs"
 logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
+print("\n")
+print("*" * 150)
+print("Log working folder>>:")
+print(logpath)
+print("*" * 150)
+os.system("pause")
+start = dt.datetime.now()
 peroid = 0 #日志保留天数,0则全部保留
 colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
 replace_dic = {
@@ -22,10 +26,10 @@ replace_dic = {
     "未连接": "Not connected",
     "温度调整": "Adjusting thermal",
     "分析仪状态从": "Analyzer Status changed from",
-    "变为": "to"#,
-    #"样品": "SAMPLE",
-    #"试剂1": "REAGENT 1",
-    #"试剂2": "REAGENT 2"
+    "变为": "to",
+    "样品": "SAMPLE",
+    "试剂1": "REAGENT 1",
+    "试剂2": "REAGENT 2"
 }
 
 Filter_List_sDescription = [
