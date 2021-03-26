@@ -1,6 +1,8 @@
 #ACL TOP log export tool 5.0 2021-03-15
 $work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $work_pth
+$date_time =  Get-Date -Format "yyyy-MM-dd_hh-mm-ss"
+Start-Transcript "Ps_log_$date_time.txt"
 
 function New-Folder {
     param (
@@ -135,4 +137,5 @@ Write-Host ((Get-ChildItem -Path ($work_pth.ToString() + "\BadLogs\")).Count.ToS
 "`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
 "Any Key to Exit..."
+Stop-Transcript
 [System.Console]::ReadKey() | Out-Null ; Exit
