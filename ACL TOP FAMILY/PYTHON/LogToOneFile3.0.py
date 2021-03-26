@@ -129,7 +129,7 @@ logonefile["Timediff<10s"] = logonefile["Timediff"].apply(lambda x: "Y"
 logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ"], axis=1, inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
 logonefile["log_days"] = peroid
-logonefile.to_csv((logpath + "\\one.csv"))
+logonefile.to_csv((logpath + "\\one.csv"),index_label="Index",encoding="utf_8")
 print("Done")
 
 print(dt.datetime.now() - start)
