@@ -1,8 +1,9 @@
-#此脚本用于批量提取Site Agent生成的TOP最新日志，并以SN命令|2021-03-12
-#4.0 增加其它日志导出
+#ACL TOP log export tool 5.0 2021/03/27 14:38
 
-$pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
-Set-Location $pth
+$work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
+Set-Location $work_pth
+$date_time =  Get-Date -Format "yyyy-MM-dd_hh-mm-ss"
+Start-Transcript "Ps_log_$date_time.txt"
 
 function New-Folder {
     param (
@@ -11,42 +12,19 @@ function New-Folder {
     if (Test-Path $NewFolderName) {
         Remove-Item -Recurse $NewFolderName
     }
-    New-Item -Path $pth -ItemType Directory -Name $NewFolderName
-}
-
-function Get-TopLogs {
-    $CmprFiles = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z"}
-    $Step1 = 0
-    if ($null -ne $CmprFiles) { 
-        foreach ($CmprFile in $CmprFiles) {
-            "-" * 100
-            Write-Host (">>>>: " + ($CmprFiles.Count - $Step1).ToString() + "  " + $CmprFile.FullName) -BackgroundColor Black -ForegroundColor Yellow
-            $CmprPath = "-o" + $pth + "\SourceLogs\" + $CmprFile.Name.Split(".")[0] + "\"
-            7z.exe e $CmprFile.FullName $CmprPath -r *DBX*.zip -aos
-            "-" * 100
-            "`n`n"
-            $Step1 ++
-        }
-    }
-}
-
-function Move-BadLogs {
-    $Dest = $pth.ToString() + "\BadLogs\" + $ZipTopLog.Directory.Name.ToString() + "_" + $ZipTopLog.Name.ToString()
-    Move-Item -Path $ZipTopLog.FullName -Destination $Dest
+    New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
 
 Write-Host 
-"*********************************
-***  ACL_Top Logs tools V4.0  ***
-*********************************`n`n"
+"*************************************************************
+***  ACL TOP log exported by DBExtract.1.21 or SiteAgent  ***
+*************************************************************`n`n"
 
 Write-Host "Starting to decompress Source TopLogs?" -ForegroundColor Yellow -BackgroundColor Black
-
-$flag = Read-Host "Y/y for Yes, N/n for Next step："
-if ($flag -eq "Y" -or $flag -eq "y"){
-
-    $CmprFiles1 = Get-ChildItem -Path ($pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z" }
-    if ($null -eq $CmprFiles1){
+$flag = Read-Host "Y/y for Yes, N/n for Next step "
+if ($flag -eq "Y" -or $flag -eq "y") {
+    $source_log_packages = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z" }
+    if ($null -eq $source_log_packages) {
         "No log files found. Any Key to Exit..."
         [System.Console]::ReadKey() | Out-Null ; Exit
     }
@@ -54,44 +32,51 @@ if ($flag -eq "Y" -or $flag -eq "y"){
     New-Folder("SourceLogs")
     New-Folder("BadLogs")
     
-    Get-TopLogs
+    $Step1 = 0
+    foreach ($source_log_package in $source_log_packages) {
+        "-" * 100
+        Write-Host (">>>>: " + ($source_log_packages.Count - $Step1).ToString() + "  " + $source_log_package.FullName) -BackgroundColor Black -ForegroundColor Yellow
+        $sourceLogs_folder_pth = "-o" + $work_pth + "\SourceLogs\" + $source_log_package.Name.Split(".")[0] + "\"
+        7z.exe e $source_log_package.FullName $sourceLogs_folder_pth -r *DBX*.zip -aos
+        "-" * 100
+        "`n`n"
+        $Step1 ++
+    }
+    
+    $toplog_DBXs = Get-ChildItem -Path ($work_pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
 
-    $TopHash = @{}
-    $AllZipTopLogs = Get-ChildItem -Path ($pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
-
-    foreach ($ZipTopLog in $AllZipTopLogs) {
-        $ZipTopLogArray = $ZipTopLog.Name.Split("_")
-        if ($ZipTopLogArray[0] -eq "DBX"){
-            $SaNmae = "CHINA_ACLTOP_7X0_" + $ZipTopLog.Name.Split("_")[1] + "_0000028003X_" + $ZipTopLog.Name
-            Rename-Item -Path $ZipTopLog.FullName -NewName $SaNmae
+    foreach ($toplog_DBX in $toplog_DBXs) {
+        $toplog_DBX_split = $toplog_DBX.Name.Split("_")
+        if ($toplog_DBX_split[0] -eq "DBX") {
+            $newname = "CHINA_ACLTOP_7X0_" + $toplog_DBX.Name.Split("_")[1] + "_0000028003X_" + $toplog_DBX.Name
+            Rename-Item -Path $toplog_DBX.FullName -NewName $newname
+            Continue
         }
-        elseif ($ZipTopLogArray[3] -ne $ZipTopLogArray[6]) {
-            Move-BadLogs
+        elseif ($toplog_DBX_split[3] -ne $toplog_DBX_split[6]) {
+            #move bad logs
+            $badlog_fullpath = $pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
+            Move-Item -Path $toplog_DBX.FullName -Destination $badlog_fullpath
         }
     }
 }
 
-if ($flag -eq "Y" -or $flag -eq "y"){
+if ($flag -eq "Y" -or $flag -eq "y") {
     New-Folder("ProDX")
 }
 
 $FormatVar = 0
-While (1){ 
-
-    $TopHash = @{}
-    $AllZipTopLogs = Get-ChildItem -Path ($pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
-
+While (1) { 
     if ($FormatVar -ge 1) {
         write-host	"`n`n"
     }
     $FormatVar ++
-    #选择要输入的Log类型
+    #Select the log type
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : Quit"
+    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : sw_all_versions`n5 : Quit"
     $Select = read-host ">>"
 
-    #定义要查找Log关键字
+    #define the keyword to generate log
     if ($Select -eq 1) {
         $LogTxt = "generalLog.txt"
     }
@@ -101,40 +86,47 @@ While (1){
     elseif ($Select -eq 3) {
         $LogTxt = "instrumentStatusStatistics.txt"
     }
-	elseif ($Select -eq 4) {
+    elseif ($Select -eq 4) {
+        $LogTxt = "sw_all_versions.txt"
+    }
+    elseif ($Select -eq 5) {
         break
     }
     else {
-        Write-Host "请正确输入!!!"
+        Write-Host "Please input number 1-5"
         Continue
     }
 
-    #创建Log类型哈希表
-    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"}
-    $LogFoldName = $SelectTable[$Select]
+    #create the logtype hashtable
+    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"; "4" = "SoftwareVersions"}
+    $txt_toplog_folder = $SelectTable[$Select]
 
-    #创建Log输出文件夹
-    New-Folder($LogFoldName)
+    #create the output folder
+    New-Folder($txt_toplog_folder)
 
-    $AllZipTopLogs = Get-ChildItem -Path ($pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
     $i = 0
-    foreach ($ZipTopLog in $AllZipTopLogs) {
+    #create empty hashtable to store the top sn
+    $sn_hashtable = @{}
+    $toplog_DBXs = Get-ChildItem -Path ($work_pth + "\SourceLogs\") -Recurse -Filter *DBX*.zip
+    foreach ($toplog_DBX in $toplog_DBXs) {
         $i ++
-        $TopHash[$ZipTopLog.Name.Split("_")[3]] = $i
+        $sn_hashtable[$toplog_DBX.Name.Split("_")[3]] = $i
     }
 
     $Step2 = 0
-    foreach ($Sn in $TopHash.Keys) {
+    $text_toplog_fullpath = "-o" + $work_pth + "\" + $txt_toplog_folder + "\"
+    foreach ($Sn in $sn_hashtable.Keys) {
         "-" * 100
-        $TopLog = (Get-ChildItem -Recurse -Path ($pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
-        Write-Host (">>>>: " + ($TopHash.Count - $Step2).ToString() + "  " + $TopLog.FullName) -BackgroundColor Black -ForegroundColor Yellow
-        $NameWithSN = $TopLog.Name.Split("_")[7] + "_" + $Sn + ".txt"
-    
-        $7zComTxt = "-o" + $pth + "\" + $LogFoldName + "\"
-        7z.exe e $TopLog.FullName -pfixmeplease $7zComTxt $LogTxt -aos
-        Rename-Item -Path (Get-ChildItem -Path $pth -Recurse -Filter $LogTxt).FullName -NewName $NameWithSN
-        if (!(Test-Path ($pth.ToString() + "\ProDX\" + $TopLog.Name))){
-            Copy-Item -Path $TopLog.FullName -Destination ($pth.ToString() + "\ProDX\")
+        $toplog_DBX = (Get-ChildItem -Recurse -Path ($work_pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
+        Write-Host (">>>>: " + ($sn_hashtable.Count - $Step2).ToString() + "  " + $toplog_DBX.FullName) -BackgroundColor Black -ForegroundColor Yellow
+        $toplog_date_SN = $toplog_DBX.Name.Split("_")[7] + "_" + $Sn + ".txt"
+
+        #7z decompress the DBX file to txt_toplog_folder
+        7z.exe e $toplog_DBX.FullName -pfixmeplease $text_toplog_fullpath $LogTxt -aos
+        $rename_source = Get-ChildItem -Path "$work_pth\$txt_toplog_folder" -Recurse -Filter $LogTxt
+        Rename-Item -Path $rename_source.FullName -NewName $toplog_date_SN
+        if (!(Test-Path ($work_pth.ToString() + "\ProDX\" + $toplog_DBX.Name))) {
+            Copy-Item -Path $toplog_DBX.FullName -Destination ($work_pth.ToString() + "\ProDX\")
         }
         "-" * 100
         "`n`n"
@@ -142,8 +134,9 @@ While (1){
     }
 }
 "`n"
-Write-Host ((Get-ChildItem -Path ($pth.ToString() + "\BadLogs\")).Count.ToString()  + " bad logs" + " "*100) -BackgroundColor Black -ForegroundColor Yellow
+Write-Host ((Get-ChildItem -Path ($work_pth.ToString() + "\BadLogs\")).Count.ToString() + " bad logs" + " " * 100) -BackgroundColor Black -ForegroundColor Yellow
 "`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
 "Any Key to Exit..."
+Stop-Transcript
 [System.Console]::ReadKey() | Out-Null ; Exit
