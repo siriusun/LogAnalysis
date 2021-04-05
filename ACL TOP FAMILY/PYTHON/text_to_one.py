@@ -20,7 +20,7 @@ def append_text(text_path,key_word,col_name):
             continue
         text_file = text_file.append(text_file_temp)
         text_file.reset_index(drop=True, inplace=True)
-    text_file.to_csv(text_path + "\\append.csv" )
+    text_file.to_csv(text_path + "\\append.csv",index_label="index")
 
 append_text(text_folder_path,"txt","trace")
 print(datetime.datetime.now()-start)
