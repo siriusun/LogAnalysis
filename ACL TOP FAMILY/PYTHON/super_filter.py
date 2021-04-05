@@ -42,4 +42,3 @@ df = super_filter(df, ["Start Arm\|LLD est\. ms\|", "\|EH\|.*\|1419\|"])
 df.to_csv(work_path + "\\done.csv", index_label="index")
 
 print(datetime.datetime.now() - start)
-
