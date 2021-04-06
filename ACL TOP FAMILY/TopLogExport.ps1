@@ -1,4 +1,4 @@
-#ACL TOP log export tool 5.0 2021/03/27 14:38
+#ACL TOP log export tool 5.0 2021/04/06 17:43
 
 $work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $work_pth
@@ -54,7 +54,7 @@ if ($flag -eq "Y" -or $flag -eq "y") {
         }
         elseif ($toplog_DBX_split[3] -ne $toplog_DBX_split[6]) {
             #move bad logs
-            $badlog_fullpath = $pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
+            $badlog_fullpath = $work_pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
             Move-Item -Path $toplog_DBX.FullName -Destination $badlog_fullpath
         }
     }
@@ -63,6 +63,9 @@ if ($flag -eq "Y" -or $flag -eq "y") {
 if ($flag -eq "Y" -or $flag -eq "y") {
     New-Folder("ProDX")
 }
+
+"`n"
+Write-Host ((Get-ChildItem -Path ($work_pth.ToString() + "\BadLogs\")).Count.ToString() + " bad logs" + " " * 100) -BackgroundColor Black -ForegroundColor Yellow
 
 $FormatVar = 0
 While (1) { 
@@ -133,8 +136,7 @@ While (1) {
         $Step2 ++
     }
 }
-"`n"
-Write-Host ((Get-ChildItem -Path ($work_pth.ToString() + "\BadLogs\")).Count.ToString() + " bad logs" + " " * 100) -BackgroundColor Black -ForegroundColor Yellow
+
 "`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
 "Any Key to Exit..."
