@@ -89,7 +89,7 @@ Filter_List_sCode = [
 Filter_List_funcArea = ["Analyzer", "Materials"]
 Filter_List_eType = ["ERROR", "INFORMATION"]
 
-
+'''
 def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
     targetfiles = []
@@ -97,6 +97,11 @@ def file_filter(filedir, keyword):
         if keyword in f:
             targetfiles.append(f)
     return targetfiles
+'''
+
+def file_filter(filedir, keyword):
+    allfilelist = os.listdir(filedir)
+    targetfiles = [file for file in allfilelist if keyword in file]
 
 
 def info_filter(infostr):
