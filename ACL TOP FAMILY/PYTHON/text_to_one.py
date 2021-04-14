@@ -1,9 +1,13 @@
 import pandas as pd
 import os
 import datetime
+import tkinter.filedialog as tk
+import tkinter
 
+root = tkinter.Tk()
+root.withdraw()
+text_folder_path = tk.askdirectory()
 start = datetime.datetime.now()
-text_folder_path = r"D:\18100347_03-31-2021_07-54-05\03-2021-traces"
 
 
 def append_text(text_path, key_word, col_name):
@@ -27,6 +31,6 @@ def append_text(text_path, key_word, col_name):
     text_file.to_csv(text_path + "\\append.csv", index_label="index")
 
 
-append_text(text_folder_path, "txt", "trace")
+append_text(text_folder_path, ".log", "trace")
 print(datetime.datetime.now() - start)
 print("done")

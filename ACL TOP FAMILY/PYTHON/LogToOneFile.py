@@ -1,11 +1,17 @@
-#Modify 2021/03/27 14:33
+#Modify 2021/04/15 09:16
 
 import pandas as pd
 import copy as cp
 import os
 import datetime as dt
+import tkinter.filedialog as tk
+import tkinter
 
-logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
+#logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
+root = tkinter.Tk()
+root.withdraw()
+logpath = tk.askdirectory()
+
 print("\n")
 print("*" * 150)
 print("Log working folder>>:")
@@ -89,31 +95,24 @@ Filter_List_sCode = [
 Filter_List_funcArea = ["Analyzer", "Materials"]
 Filter_List_eType = ["ERROR", "INFORMATION"]
 
-'''
-def file_filter(filedir, keyword):
-    allfilelist = os.listdir(filedir)
-    targetfiles = []
-    for f in allfilelist:
-        if keyword in f:
-            targetfiles.append(f)
-    return targetfiles
-'''
 
 def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
     targetfiles = [file for file in allfilelist if keyword in file]
+    return targetfiles
 
-
+'''
 def info_filter(infostr):
     if ("ERROR:" in infostr) or (infostr in Filter_List_sDescription):
         return "Y"
     else:
         return "N"
+'''
 
 
 def replace_desp(desp):
-    if "分析仪状态从" != desp[0:6]:
-        return desp
+    #if "分析仪状态从" != desp[0:6]:
+    #    return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
     return desp

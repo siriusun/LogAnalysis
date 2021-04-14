@@ -1,9 +1,13 @@
-#ACL TOP log export tool 5.0 2021/04/06 17:43
+#ACL TOP log export tool 5.0 2021/04/15 04:15
 
-$work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
-Set-Location $work_pth
-$date_time =  Get-Date -Format "yyyy-MM-dd_hh-mm-ss"
-Start-Transcript "Ps_log_$date_time.txt"
+Function Get-FileName {  
+    #[System.Reflection.Assembly]::Load("System.Windows.Forms") | Out-Null
+    [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
+    $OpenFileDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $OpenFileDialog.ShowDialog() | Out-Null
+    $OpenFileDialog.SelectedPath
+}
+
 
 function New-Folder {
     param (
@@ -14,6 +18,14 @@ function New-Folder {
     }
     New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
+
+
+#$work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
+Write-Host "Select the Data folder..." -ForegroundColor Yellow -BackgroundColor Black
+$work_pth = Get-FileName
+Set-Location $work_pth
+$date_time =  Get-Date -Format "yyyy-MM-dd_hh-mm-ss"
+Start-Transcript "Ps_log_$date_time.txt"
 
 Write-Host 
 "*************************************************************
@@ -134,6 +146,14 @@ While (1) {
         "-" * 100
         "`n`n"
         $Step2 ++
+    }
+    $ip = Read-Host "Drop the date form filename? Y/y for Yes, N/n for Next " 
+    if (@("Y","y") -contains $ip){
+        $txt_toplogs = Get-ChildItem -Path ($work_pth + "\$txt_toplog_folder") -Filter *.txt
+        foreach ($txt_toplog in $txt_toplogs) {
+            $txt_toplog.FullName.ToString()
+            Rename-Item -Path $txt_toplog.FullName ("T" + $txt_toplog.Name.Split("_")[1])
+        }
     }
 }
 
