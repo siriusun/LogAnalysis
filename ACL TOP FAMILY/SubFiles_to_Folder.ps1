@@ -1,7 +1,7 @@
 #$source_path = "D:\TZB Analysis\New folder (2)"
 #$dest_path = "D:\TZB Analysis\New folder"
 
-Function Get-FileName() {  
+Function Get-FileName {  
     #[System.Reflection.Assembly]::Load("System.Windows.Forms") | Out-Null
     [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
     $OpenFileDialog = New-Object System.Windows.Forms.FolderBrowserDialog
