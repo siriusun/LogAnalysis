@@ -20,7 +20,10 @@ print("*" * 150)
 os.system("pause")
 start = dt.datetime.now()
 peroid = 0  #log reserve days; 0 means all.
-colfilter = ["sCode", "eType", "dateTime", "funcArea", "sDescription"]
+colfilter = [
+    "sCode", "eType", "dateTime", "funcArea", "sDescription", "sFilename",
+    "nSubCode", "eCPU"
+]
 replace_dic = {
     "开机": "Power up",
     "初始化": "Initializing",
@@ -164,18 +167,29 @@ logonefile = logonefile.rename(
         "dateTime_x": "dateTime",
         "funcArea_x": "funcArea",
         "sDescription_x": "sDescription",
+        "sFilename_x": "sFilename",
+        "nSubCode_x": "nSubCode",
+        "eCPU_x": "eCPU",
         "sCode_y": "sCodeSQ",
         "eType_y": "eTypeSQ",
         "dateTime_y": "dateTimeSQ",
         "funcArea_y": "funcAreaSQ",
-        "sDescription_y": "sDescriptionSQ"
+        "sDescription_y": "sDescriptionSQ", 
+        "sFilename_y": "sFilenameSQ",
+        "nSubCode_y": "nSubCodeSQ",
+        "eCPU_y": "eCPUSQ"
     })
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
 logonefile["Timediff<10s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                           if x < 10 else "N")
-logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ"], axis=1, inplace=True)
+logonefile.drop([
+    "eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ",
+    "eCPUSQ"
+],
+                axis=1,
+                inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
 logonefile["log_days"] = peroid
 logonefile.to_csv((logpath + "\\one.csv"),
