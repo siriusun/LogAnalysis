@@ -174,7 +174,7 @@ logonefile = logonefile.rename(
         "eType_y": "eTypeSQ",
         "dateTime_y": "dateTimeSQ",
         "funcArea_y": "funcAreaSQ",
-        "sDescription_y": "sDescriptionSQ", 
+        "sDescription_y": "sDescriptionSQ",
         "sFilename_y": "sFilenameSQ",
         "nSubCode_y": "nSubCodeSQ",
         "eCPU_y": "eCPUSQ"
