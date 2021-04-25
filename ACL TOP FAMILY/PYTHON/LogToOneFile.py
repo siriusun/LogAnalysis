@@ -128,7 +128,8 @@ def logaddsq(logfullpath, filter_col,
                         sep="\t",
                         encoding="utf_16_le",
                         usecols=filter_col)
-    tlog0 = tlog0.dropna(axis=0, how="any")
+    tlog0 = tlog0.dropna(
+        subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
     #筛选掉无用数据
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
