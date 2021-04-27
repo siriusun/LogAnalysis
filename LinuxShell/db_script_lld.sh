@@ -10,6 +10,10 @@ get_location(){
 	read position
 }
 
+cuvette_filter(){
+	grep -E "Cuvette|EH.*\|"$1"\|" append.csv | grep -B 5 -E "\|EH\|" > CuvetteTrace_"$1".csv
+}
+
 zSlippage_filter(){
 	if [ "$1" -eq 4 ] ; then
 		arm="LAS"
@@ -37,8 +41,8 @@ lld_filter(){
 }
 
 while true; do
-	echo -e "\nSelect Function to Filter Trace File(1/2):"
-	echo -e "\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n4 : LAS Z-Slippage\n5 : Sample Z-Slippage\n6 : Reagent Z-Slippage\n7 : Start Z-Slippage\n8 : exit\n>>:\c"
+	echo -e "\nSelect Function to Filter Trace File(1-8):"
+	echo -e "\nLLD Group\n\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n\nSlippage Group\n\n4 : LAS Z-Slippage\n5 : Sample Z-Slippage\n6 : Reagent Z-Slippage\n7 : Start Z-Slippage\n\nOther Group\n\n8 : Cuvette Error\n9 : Exit\n>>:\c"
 	read select_func
 	if [ "$select_func" -eq 1 ] ; then 
 		grep -E "\|Reagent Arm\|Clean Step - Start\|.*\|7\|0\|0\||\|Reagent Arm\|LLD est\. ms\||\|Reagent Arm\|AspLldCheck\|" append.csv | grep -A 2 -E "\|Clean Step - Start\|" > LldCleanCupR1.csv
@@ -60,6 +64,10 @@ while true; do
 	elif [ "$select_func" -eq 7 ] ; then
 		zSlippage_filter 7
 	elif [ "$select_func" -eq 8 ] ; then
+		echo -e "Input cuvette error(e.g. 1253):\c"
+		read cuv_error
+		cuvette_filter $cuv_error
+	elif [ "$select_func" -eq 9 ] ; then
 		exit
 	else
 		echo -e "\nPlease Input 1-4 Next Run!!"
