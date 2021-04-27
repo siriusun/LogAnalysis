@@ -10,6 +10,22 @@ get_location(){
 	read position
 }
 
+zSlippage_filter(){
+	if [ "$1" -eq 4 ] ; then
+		arm="LAS"
+	elif [ "$1" -eq 5 ] ; then
+		arm="Sample"
+	elif [ "$1" -eq 6 ] ; then
+		arm="Reagent"
+	elif [ "$1" -eq 7 ] ; then
+		arm="Start"
+	else 
+		echo "wrong para"
+	fi
+	grep -E "\|"$arm" Arm\|NewPos\||\|EH\|.*\|1367\|$1\|" append.csv | grep -B 1 -E "\|EH\|" > "$arm"_zSlippage.csv
+	grep -E "\|"$arm" Arm\|NewPos\|" append.csv > "$arm"_XYZ_Location.csv
+}
+
 lld_filter(){
 	if [ $rack -lt 4 ] ; then
 		grep -E "\|Reagent Arm\|ASPIRATE\|.*\|"$area"\|"$((rack+14))"\|"$((position-1))"\||\|Reagent Arm\|LLD est\. ms\||\|Reagent Arm\|AspLldCheck\|" append.csv | grep -A 2 -E "\|ASPIRATE\|" > ErrorLld_R"$rack"_P"$position".txt
@@ -22,7 +38,7 @@ lld_filter(){
 
 while true; do
 	echo -e "\nSelect Function to Filter Trace File(1/2):"
-	echo -e "\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n4 : exit\n>>:\c"
+	echo -e "\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n4 : LAS Z-Slippage\n5 : Sample Z-Slippage\n6 : Reagent Z-Slippage\n7 : Start Z-Slippage\n8 : exit\n>>:\c"
 	read select_func
 	if [ "$select_func" -eq 1 ] ; then 
 		grep -E "\|Reagent Arm\|Clean Step - Start\|.*\|7\|0\|0\||\|Reagent Arm\|LLD est\. ms\||\|Reagent Arm\|AspLldCheck\|" append.csv | grep -A 2 -E "\|Clean Step - Start\|" > LldCleanCupR1.csv
@@ -36,6 +52,14 @@ while true; do
 		get_location
 		lld_filter 1425
 	elif [ "$select_func" -eq 4 ] ; then
+		zSlippage_filter 4
+	elif [ "$select_func" -eq 5 ] ; then
+		zSlippage_filter 5
+	elif [ "$select_func" -eq 6 ] ; then
+		zSlippage_filter 6
+	elif [ "$select_func" -eq 7 ] ; then
+		zSlippage_filter 7
+	elif [ "$select_func" -eq 8 ] ; then
 		exit
 	else
 		echo -e "\nPlease Input 1-4 Next Run!!"
