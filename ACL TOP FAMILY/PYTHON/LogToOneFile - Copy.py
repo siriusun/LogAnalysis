@@ -1,4 +1,4 @@
-#Modify 2021/04/15 09:16
+ #Modify 2021/04/15 09:16
 
 import pandas as pd
 import copy as cp
@@ -12,19 +12,14 @@ root = tkinter.Tk()
 root.withdraw()
 logpath = tk.askdirectory()
 
-peroid = 0  #log reserve days; 0 means all.
-dropHeadTail = True  #是否去除首尾两月数据,默认不去
-
 print("\n")
 print("*" * 150)
 print("Log working folder>>:")
 print(logpath)
-print(f"保留的日志天数：{peroid}")
-print(f"是否去除首尾两月：{dropHeadTail}")
 print("*" * 150)
 os.system("pause")
 start = dt.datetime.now()
-
+peroid = 0  #log reserve days; 0 means all.
 colfilter = [
     "sCode", "eType", "dateTime", "funcArea", "sDescription", "sFilename",
     "nSubCode", "eCPU"
@@ -136,13 +131,6 @@ def logaddsq(logfullpath, filter_col,
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
-    #去除首尾两月数据
-    if dropHeadTail:
-        tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
-        start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
-        tlog0 = tlog0[tlog0.year_month != start_month] #去除首月
-        tlog0 = tlog0[tlog0.year_month != end_month] #去除尾月
-        tlog0.drop(["year_month"],axis=1,inplace=True)
     #筛选掉无用数据
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
                   & (tlog0.eType.isin(Filter_List_eType))]
@@ -155,7 +143,6 @@ def logaddsq(logfullpath, filter_col,
     tlog1 = cp.copy(tlog0)
     tlog1.index = tlog1.index + 1
     logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
-    #保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
             logwithsq["dateTime_x"])) / pd.Timedelta(1, "d") - log_days < 0
