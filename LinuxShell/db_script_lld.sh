@@ -41,8 +41,8 @@ lld_filter(){
 }
 
 while true; do
-	echo -e "\nSelect Function to Filter Trace File(1-8):"
-	echo -e "\nLLD Group\n\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n\nSlippage Group\n\n4 : LAS Z-Slippage\n5 : Sample Z-Slippage\n6 : Reagent Z-Slippage\n7 : Start Z-Slippage\n\nOther Group\n\n8 : Cuvette Error\n9 : Exit\n>>:\c"
+	echo -e "\n\e[42mSelect Function to Filter Trace File(1-8):\e[0m"
+	echo -e "\n\e[46mLLD Group\e[0m\n1 : ErrorLLD(1427) in Clean Cup\n2 : ErrorLLD(1419) in Special Location\n3 : ErrorLLD(1427) in Special Location\n\n\e[46mSlippage Group\e[0m\n4 : LAS Z-Slippage\n5 : Sample Z-Slippage\n6 : Reagent Z-Slippage\n7 : Start Z-Slippage\n\n\e[46mOther Group\e[0m\n8 : Cuvette Error\n9 : Exit\n>>:\c"
 	read select_func
 	if [ "$select_func" -eq 1 ] ; then 
 		grep -E "\|Reagent Arm\|Clean Step - Start\|.*\|7\|0\|0\||\|Reagent Arm\|LLD est\. ms\||\|Reagent Arm\|AspLldCheck\|" append.csv | grep -A 2 -E "\|Clean Step - Start\|" > LldCleanCupR1.csv
