@@ -13,7 +13,7 @@ root.withdraw()
 logpath = tk.askdirectory()
 
 peroid = 0  #log reserve days; 0 means all.
-dropHeadTail = True  #是否去除首尾两月数据,默认不去
+dropHeadTail = False  #是否去除首尾两月数据,默认不去
 
 print("\n")
 print("*" * 150)
