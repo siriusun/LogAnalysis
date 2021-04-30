@@ -1,4 +1,4 @@
-#ACL TOP log export tool 5.0 2021/04/15 04:15
+#ACL TOP log export tool 5.0 2021/04/30 14:41
 
 Function Get-FileName {  
     #[System.Reflection.Assembly]::Load("System.Windows.Forms") | Out-Null
@@ -19,10 +19,24 @@ function New-Folder {
     New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
 
+while ($True) {
+    Write-Host "How to Get Work Path:`n1 : Current Folder`n2 : Select one"
+    $pth = Read-Host ">>"
 
-#$work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
-Write-Host "Select the Data folder..." -ForegroundColor Yellow -BackgroundColor Black
-$work_pth = Get-FileName
+    if ($pth -eq 1) {
+        $work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
+        break
+    }
+    elseif ($pth -eq 2) {
+        Write-Host "Select the Data folder..." -ForegroundColor Yellow -BackgroundColor Black
+        $work_pth = Get-FileName
+        break
+    }
+    else {
+        Write-Host "Input 1/2!!" -BackgroundColor Blue -ForegroundColor Red
+    }
+}
+Write-Host "Work Path: $work_pth" -ForegroundColor Yellow -BackgroundColor Black
 Set-Location $work_pth
 $date_time =  Get-Date -Format "yyyy-MM-dd_hh-mm-ss"
 Start-Transcript "Ps_log_$date_time.txt"
@@ -43,6 +57,27 @@ if ($flag -eq "Y" -or $flag -eq "y") {
 
     New-Folder("SourceLogs")
     New-Folder("BadLogs")
+
+    $toplog_DBXs = Get-ChildItem -Path ($work_pth + "\DownloadLogs\") -Recurse -Filter *DBX_*_????-??-??_??-??-??*.zip
+    if ($null -ne $toplog_DBXs){
+        foreach ($toplog_DBX in $toplog_DBXs) {
+            $toplog_DBX_split = $toplog_DBX.Name.Split("_")
+            if ($toplog_DBX_split[0] -eq "DBX") {
+                $newname0 = $work_pth.ToString() + "\SourceLogs\" + "CHINA_ACLTOP_7X0_" + $toplog_DBX.Name.Split("_")[1] + "_0000028003X_" + $toplog_DBX.Name
+                Copy-Item -Path $toplog_DBX.FullName -Destination $newname0
+                Continue
+            }
+            elseif ($toplog_DBX_split[3] -ne $toplog_DBX_split[6]) {
+                #move bad logs
+                $badlog_fullpath0 = $work_pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
+                Copy-Item -Path $toplog_DBX.FullName -Destination $badlog_fullpath0
+            }
+            else {
+                $newname1 = $work_pth.ToString() + "\SourceLogs\" + $toplog_DBX.Name
+                Copy-Item -Path $toplog_DBX.FullName -Destination $newname1
+            }
+        }
+    }
     
     $Step1 = 0
     foreach ($source_log_package in $source_log_packages) {
@@ -60,14 +95,14 @@ if ($flag -eq "Y" -or $flag -eq "y") {
     foreach ($toplog_DBX in $toplog_DBXs) {
         $toplog_DBX_split = $toplog_DBX.Name.Split("_")
         if ($toplog_DBX_split[0] -eq "DBX") {
-            $newname = "CHINA_ACLTOP_7X0_" + $toplog_DBX.Name.Split("_")[1] + "_0000028003X_" + $toplog_DBX.Name
-            Rename-Item -Path $toplog_DBX.FullName -NewName $newname
+            $newname2 = "CHINA_ACLTOP_7X0_" + $toplog_DBX.Name.Split("_")[1] + "_0000028003X_" + $toplog_DBX.Name
+            Rename-Item -Path $toplog_DBX.FullName -NewName $newname2
             Continue
         }
         elseif ($toplog_DBX_split[3] -ne $toplog_DBX_split[6]) {
             #move bad logs
-            $badlog_fullpath = $work_pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
-            Move-Item -Path $toplog_DBX.FullName -Destination $badlog_fullpath
+            $badlog_fullpath1 = $work_pth.ToString() + "\BadLogs\" + $toplog_DBX.Directory.Name.ToString() + "_" + $toplog_DBX.Name.ToString()
+            Move-Item -Path $toplog_DBX.FullName -Destination $badlog_fullpath1
         }
     }
 }
@@ -156,9 +191,8 @@ While (1) {
         }
     }
 }
-
+Stop-Transcript
 "`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
 "Any Key to Exit..."
-Stop-Transcript
 [System.Console]::ReadKey() | Out-Null ; Exit
