@@ -1,10 +1,10 @@
 #此脚本用于批量提取TCA日志
-#使用说明，将脚本与日志文件放在同一文件夹运行，日志必须是rar/zip格式，一家医院一个压缩文件
+#使用说明，将脚本与日志文件放在同一文件夹运行，日志必须是rar/zip/7z格式，一家医院一个压缩文件
 #日志文件命名要求：TCALOG_流水线大号_医院中文标准名称.rar/zip
 
 $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
-$allLog = "y"
+$allLog = "y" #选择Y导出所有日志，否则只导出一个
 
 #给所有的LOG加上序号
 $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") -Filter TCALOG_167*
@@ -35,7 +35,7 @@ function Get-TcaLog {
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
         Write-Host ("Start to Extract File :  " + ($TcaLogs.Count - $Step1).ToString()) -BackgroundColor Black -ForegroundColor Yellow
-
+        #解压所有的日志到TcaLogTemp
         $7zCom = "-o" + $Pth + "\TcaLogTemp\"
         7z.exe e $TcaLog.FullName $7zCom -r *.zip
 
@@ -43,6 +43,7 @@ function Get-TcaLog {
         "`n`n"
         $Step1 ++
         $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
+        #将一条流水线的解压出来的临时日志加上流水线大号/医院信息转存至TcaLogs
         foreach ($TcaDayLog in $TcaDayLogs) {
             $NewName = $Pth.ToString() + "\TcaLogs\" + $TcaLog.Name.Split(".")[0] + "_" + $TcaDayLog.Name
             Move-Item -Path $TcaDayLog.FullName -Destination $NewName
