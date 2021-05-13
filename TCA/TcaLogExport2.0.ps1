@@ -7,22 +7,21 @@ Set-Location $Pth
 $allLog = "y"
 
 #给所有的LOG加上序号
-<#
-$PreTcaLogs = Get-ChildItem -Path $Pth -Filter TCALOG_167*
+$TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") -Filter TCALOG_167*
 
-foreach ($PreTcaLog in $PreTcaLogs) {
-    if ($PreTcaLog.Name.Split("_")[1] -contains "_"){
-        $Order = $PreTcaLog.Name.Split("_")[1][-3..-1]
+foreach ($TcaLog in $TcaLogs) {
+    if ($TcaLog.Name.Split("_")[1][-4] -eq "-") {
+        $Order = "H" + (-join $TcaLog.Name.Split("_")[1][-3..-1])
     }
     else {
-        $Order = $PreTcaLog.Name.Split("_")[1][-2..-1]
+        $Order = "H0" + (-join $TcaLog.Name.Split("_")[1][-2..-1])
     }
-    $NewSortName = $Order.ToString() + "_" + $PreTcaLog.Name
-    Rename-Item -Path $PreTcaLog.FullName -NewName $NewSortName
-    $Order++
+    $NewSortName = $Order.ToString() + "_" + $TcaLog.Name.Replace("167", "H167")
+    Write-Host $TcaLog.FullName
+    Rename-Item -Path $TcaLog.FullName -NewName $NewSortName
 }
-#>
-#Fuction
+"Order added, Any Key to Continue..."
+[System.Console]::ReadKey() | Out-Null
 function New-Folder ($FolderName) {
     if (Test-Path $FolderName) {
         Remove-Item -Recurse $FolderName
@@ -90,7 +89,7 @@ while (1) {
     elseif ($Select -eq 4) {
         $LogTxt = "LASPC?.log"
     }
-	elseif ($Select -eq 5) {
+    elseif ($Select -eq 5) {
         Exit
     }
     else {
@@ -99,7 +98,7 @@ while (1) {
     }
 
     #创建Log类型哈希表
-    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs"; "4" = "LasPcLogs"}
+    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs"; "4" = "LasPcLogs" }
     $LogFoldName = $SelectTable[$Select]
 
 
@@ -107,7 +106,7 @@ while (1) {
     New-Folder($LogFoldName)
     $LogsFileZips = Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip
     $distinct_hosp_hashtable = @{}
-    foreach ($ZipLog in $LogsFileZips){
+    foreach ($ZipLog in $LogsFileZips) {
         $distinct_hosp_hashtable[$ZipLog.Name.Split("_")[2]] = 1
     }
     $flag = 0
