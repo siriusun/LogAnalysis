@@ -8,16 +8,17 @@ import tkinter.filedialog as tk
 import tkinter
 
 while True:
-    select_input = input("How to Get Work Path:\n1 : Current Folder\n2 : Select one\n>>:")
-    if select_input == "1" :
+    select_input = input(
+        "How to Get Work Path:\n1 : Current Folder\n2 : Select one\n>>:")
+    if select_input == "1":
         logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
         break
-    elif select_input == "2" :
+    elif select_input == "2":
         root = tkinter.Tk()
         root.withdraw()
         logpath = tk.askdirectory()
         break
-    else :
+    else:
         print("Input 1 or 2")
 
 peroid = 0  #log reserve days; 0 means all.
@@ -117,6 +118,7 @@ def file_filter(filedir, keyword):
     targetfiles = [file for file in allfilelist if keyword in file]
     return targetfiles
 
+
 '''
 def info_filter(infostr):
     if ("ERROR:" in infostr) or (infostr in Filter_List_sDescription):
@@ -148,9 +150,9 @@ def logaddsq(logfullpath, filter_col,
     if dropHeadTail:
         tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
         start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
-        tlog0 = tlog0[tlog0.year_month != start_month] #去除首月
-        tlog0 = tlog0[tlog0.year_month != end_month] #去除尾月
-        tlog0.drop(["year_month"],axis=1,inplace=True)
+        tlog0 = tlog0[tlog0.year_month != start_month]  #去除首月
+        tlog0 = tlog0[tlog0.year_month != end_month]  #去除尾月
+        tlog0.drop(["year_month"], axis=1, inplace=True)
     #筛选掉无用数据
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
                   & (tlog0.eType.isin(Filter_List_eType))]
