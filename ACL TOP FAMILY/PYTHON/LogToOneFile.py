@@ -1,4 +1,4 @@
-#Modify 2021/04/15 09:16
+#Modify 2021/05/11 09:16
 
 import pandas as pd
 import copy as cp
@@ -7,10 +7,18 @@ import datetime as dt
 import tkinter.filedialog as tk
 import tkinter
 
-#logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
-root = tkinter.Tk()
-root.withdraw()
-logpath = tk.askdirectory()
+while True:
+    select_input = input("How to Get Work Path:\n1 : Current Folder\n2 : Select one\n>>:")
+    if select_input == "1" :
+        logpath = os.path.split(os.path.abspath(__file__))[0] + "\\GeneralLogs"
+        break
+    elif select_input == "2" :
+        root = tkinter.Tk()
+        root.withdraw()
+        logpath = tk.askdirectory()
+        break
+    else :
+        print("Input 1 or 2")
 
 peroid = 0  #log reserve days; 0 means all.
 dropHeadTail = False  #是否去除首尾两月数据,默认不去
