@@ -28,8 +28,12 @@ while i < total_lines:
             df.iloc[i, 7] = "Y"
             es_str1 = "Analyzer Status changed from Busy to Emergency stop."
         j = 1
-        while (i + j <= total_lines) and (pd.to_datetime(df.iloc[i + j, 1]) - pd.to_datetime(df.iloc[i, 1])) / pd.Timedelta(1, "S") < 3600:
-            if (df.iloc[i + j, 5] == "Analyzer Status changed from Busy to Emergency stop.") and (df.iloc[i + j, 0] != df.iloc[i, 0]):
+        while (i + j <= total_lines
+               ) and (pd.to_datetime(df.iloc[i + j, 1]) - pd.to_datetime(
+                   df.iloc[i, 1])) / pd.Timedelta(1, "S") < 3600:
+            if (df.iloc[i + j, 5]
+                    == "Analyzer Status changed from Busy to Emergency stop."
+                ) and (df.iloc[i + j, 0] != df.iloc[i, 0]):
                 df.iloc[i + j, 7] = "Y"
                 if es_str2 != "Analyzer Status changed from Busy to Emergency stop.":
                     step = j
@@ -43,4 +47,3 @@ while i < total_lines:
         i = i + 1
 
 df.to_csv("d:\\es.csv", index_label="index")
-
