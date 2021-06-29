@@ -34,3 +34,4 @@ def append_text(text_path, key_word, col_name):
 append_text(text_folder_path, ".log", "trace")
 print(datetime.datetime.now() - start)
 print("done")
+

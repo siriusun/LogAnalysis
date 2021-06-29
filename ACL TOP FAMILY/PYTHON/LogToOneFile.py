@@ -59,6 +59,48 @@ replace_dic = {
 
 #"Analyzer Status changed from Busy to Controlled stop.",
 #Selected sDescription list
+'''
+"Analyzer Status changed from Busy to Ready."
+"Analyzer Status changed from Ready to Busy."
+"Analyzer Status changed from Ready to Maintenance."
+"Analyzer Status changed from Maintenance to Ready."
+"Analyzer Status changed from Busy to Controlled stop."
+"Analyzer Status changed from Controlled stop to Busy."
+"Analyzer Status changed from Ready to Initializing."
+"Analyzer Status changed from Not connected to Power up."
+"Analyzer Status changed from Power up to Initializing."
+"Analyzer Status changed from Initializing to Adjusting thermal."
+"Analyzer Status changed from Adjusting thermal to Ready."
+"Analyzer Status changed from Maintenance to Error."
+"Analyzer Status changed from Error to Emergency stop."
+"Analyzer Status changed from Emergency stop to Not connected."
+"Analyzer Status changed from Ready to Error."
+"Analyzer Status changed from Error to Ready."
+"Analyzer Status changed from Ready to Emergency stop."
+"Analyzer Status changed from Error to Maintenance."
+"Analyzer Status changed from Controlled stop to Error."
+"Analyzer Status changed from Ready to Diagnostics."
+"Analyzer Status changed from Diagnostics to Emergency stop."
+"Analyzer Status changed from Initializing to Error."
+"Analyzer Status changed from Busy to Emergency stop."
+"Analyzer Status changed from Error to Initializing."
+"Analyzer Status changed from Not connected to Error."
+"Analyzer Status changed from Error to Not connected."
+"Analyzer Status changed from Power up to Diagnostics."
+"Analyzer Status changed from Adjusting thermal to Error."
+"Analyzer Status changed from Error to Adjusting thermal."
+"Analyzer Status changed from Not connected to Emergency stop."
+"Analyzer Status changed from Initializing to Ready."
+"Analyzer Status changed from Maintenance to Emergency stop."
+"Analyzer Status changed from Initializing to Emergency stop."
+"Analyzer Status changed from Power up to Emergency stop."
+"Analyzer Status changed from Power up to Error."
+"Analyzer Status changed from Error to Power up."
+"Analyzer Status changed from Error to Diagnostics."
+"Analyzer Status changed from Controlled stop to Emergency stop."
+"Analyzer Status changed from Controlled stop to Ready."
+"Analyzer Status changed from Adjusting thermal to Emergency stop."
+'''
 Filter_List_sDescription = [
     "Analyzer Status changed from Busy to Emergency stop.",
     "Analyzer Status changed from Controlled stop to Emergency stop.",
