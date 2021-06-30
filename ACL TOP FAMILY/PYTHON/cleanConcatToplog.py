@@ -102,7 +102,6 @@ replace_dic = {
 "Analyzer Status changed from Adjusting thermal to Emergency stop."
 '''
 Filter_List_sDescription = [
-    "Analyzer Status changed from Ready to Busy.",
     "Analyzer Status changed from Busy to Emergency stop.",
     "Analyzer Status changed from Controlled stop to Emergency stop.",
     "Analyzer Status changed from Initializing to Emergency stop.",
