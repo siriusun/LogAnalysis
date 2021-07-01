@@ -14,7 +14,7 @@ $source_path = Get-FileName
 Write-Host "Select the Destination Folder"
 $dest_path = Get-FileName
 
-$sub_files = Get-ChildItem -Recurse -Path $source_path -Filter *.log
+$sub_files = Get-ChildItem -Recurse -Path $source_path -Filter *.*
 
 foreach ($sub_file in $sub_files){
     Move-Item -Path $sub_file.FullName -Destination $dest_path
