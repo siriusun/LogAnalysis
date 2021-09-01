@@ -135,7 +135,7 @@ while (1) {
             foreach ($ToRenameLog in $ToRenameLogs) {
                 $flag ++
                 $NewFileName = $ZipLog.Name.split(".")[0]
-                if ($NewFileName.Split("_").Count -eq 6) {
+                if ($NewFileName.Split("_").Count -eq 7) {
                     $NewFileName = $NewFileName + "_" + $flag.ToString() + ".txt"
                 }
                 else {
