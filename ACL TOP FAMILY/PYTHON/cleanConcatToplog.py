@@ -103,6 +103,7 @@ replace_dic = {
 '''
 Filter_List_sDescription = [
     "Analyzer Status changed from Busy to Emergency stop.",
+    "Analyzer Status changed from Busy to Controlled stop.",
     "Analyzer Status changed from Controlled stop to Emergency stop.",
     "Analyzer Status changed from Initializing to Emergency stop.",
     "Analyzer Status changed from Initializing to Error.",
@@ -248,8 +249,8 @@ logonefile = logonefile.rename(
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
-logonefile["Timediff<10s"] = logonefile["Timediff"].apply(lambda x: "Y"
-                                                          if x < 10 else "N")
+logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
+                                                          if x < 2 else "N")
 logonefile.drop([
     "eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ",
     "eCPUSQ"
@@ -264,3 +265,4 @@ logonefile.to_csv((logpath + "\\one.csv"),
 print("Done")
 
 print(dt.datetime.now() - start)
+os.system("pause")
