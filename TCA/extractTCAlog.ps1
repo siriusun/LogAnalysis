@@ -1,12 +1,13 @@
-#此脚本用于批量提取TCA日志 2021-05-14
+#此脚本用于批量提取TCA日志 2021-09-01
 #使用说明，将脚本与日志文件放在同一文件夹运行，日志必须是rar/zip/7z格式，一家医院一个压缩文件
-#日志文件命名要求：TCALOG_流水线大号_医院中文标准名称.rar/zip
+#日志文件命名要求：TCA_流水线短号_医院中文标准名称_姓名日期.rar/zip
 
 $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
 $allLog = "y" #选择Y导出所有日志，否则只导出一个
 
-#给所有的LOG加上序号
+<#
+给所有的LOG加上序号
 $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") -Filter TCALOG_167*
 
 foreach ($TcaLog in $TcaLogs) {
@@ -22,6 +23,8 @@ foreach ($TcaLog in $TcaLogs) {
 }
 "Order added, Any Key to Continue..."
 [System.Console]::ReadKey() | Out-Null
+#>
+
 function New-Folder ($FolderName) {
     if (Test-Path $FolderName) {
         Remove-Item -Recurse $FolderName
@@ -108,7 +111,7 @@ while (1) {
     $LogsFileZips = Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip
     $distinct_hosp_hashtable = @{}
     foreach ($ZipLog in $LogsFileZips) {
-        $distinct_hosp_hashtable[$ZipLog.Name.Split("_")[2]] = 1
+        $distinct_hosp_hashtable[$ZipLog.Name.Split("_")[1]] = 1
     }
     $flag = 0
     $Step2 = 0
@@ -132,7 +135,7 @@ while (1) {
             foreach ($ToRenameLog in $ToRenameLogs) {
                 $flag ++
                 $NewFileName = $ZipLog.Name.split(".")[0]
-                if ($NewFileName.Split("_").Count -eq 7) {
+                if ($NewFileName.Split("_").Count -eq 6) {
                     $NewFileName = $NewFileName + "_" + $flag.ToString() + ".txt"
                 }
                 else {
