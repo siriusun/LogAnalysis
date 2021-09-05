@@ -1,0 +1,12 @@
+let
+    Source = {Number.From(Date.FromText("2020/01/01"))..Number.From(Date.FromText("2021/12/31")
+)},
+    #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Renamed Columns" = Table.RenameColumns(#"Converted to Table",{{"Column1", "Date"}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Date", type date}}),
+    #"Inserted Year" = Table.AddColumn(#"Changed Type", "Year", each Date.Year([Date]), Int64.Type),
+    #"Inserted Month" = Table.AddColumn(#"Inserted Year", "Month", each Date.Month([Date]), Int64.Type),
+    #"Added YearMonth" = Table.AddColumn(#"Inserted Month", "Year/Month", each Date.ToText([Date],"yyyy/MM")),
+    #"Inserted Week" = Table.AddColumn(#"Added YearMonth", "Week", each Date.ToText(Date.StartOfWeek([Date]),"yyyy/MM/dd") & "-" & Date.ToText(Date.EndOfWeek([Date]),"MM/dd"))
+in
+    #"Inserted Week"
