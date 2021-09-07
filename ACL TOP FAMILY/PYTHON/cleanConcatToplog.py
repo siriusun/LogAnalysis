@@ -204,6 +204,8 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
+    tlog0 = tlog0.append(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"], "dateTime": [log_gen_time, log_gen_time], "eType": ["ERROR", "ERROR"], "funcArea": ["timeFlag", "timeFlag"], "sDescription": ["timeFlag", "timeFlag"], "sFilename": ["timeFlag", "timeFlag"],
+                                       "nSubCode": ["timeFlag", "timeFlag"], "eCPU": ["timeFlag", "timeFlag"]}))
     tlog0.reset_index(drop=True, inplace=True)
     tlog1 = cp.copy(tlog0)
     tlog1.index = tlog1.index + 1
