@@ -1,4 +1,4 @@
-#Modify 2021/05/11 09:16
+# Modify 2021/09/08 09:16
 
 import pandas as pd
 import copy as cp
@@ -21,15 +21,18 @@ while True:
     else:
         print("Input 1 or 2")
 
-peroid = 0  #log reserve days; 0 means all.
-dropHeadTail = False  #是否去除首尾两月数据,默认不去
+peroid = 0  # log reserve days; 0 means all.
+dropHeadTail = False  # 是否去除首尾两月数据,默认不去
+lightMode = False
 
 print("\n")
 print("*" * 150)
 print("Log working folder>>:")
 print(logpath)
-print(f"保留的日志天数：{peroid}")
-print(f"是否去除首尾两月：{dropHeadTail}")
+keepDays = "wholeLogs" if peroid == 0 else peroid
+print(f"保留的日志天数：{keepDays}")
+print(f"去除首尾两月：{dropHeadTail}")
+print(f"精简的日志: {lightMode}")
 print("*" * 150)
 os.system("pause")
 start = dt.datetime.now()
@@ -58,7 +61,7 @@ replace_dic = {
 }
 
 #"Analyzer Status changed from Busy to Controlled stop.",
-#Selected sDescription list
+# Selected sDescription list
 '''
 "Analyzer Status changed from Busy to Ready."
 "Analyzer Status changed from Ready to Busy."
@@ -108,10 +111,11 @@ Filter_List_sDescription = [
     "Analyzer Status changed from Initializing to Emergency stop.",
     "Analyzer Status changed from Initializing to Error.",
     "Analyzer Status changed from Maintenance to Emergency stop.",
-    "Analyzer Status changed from Maintenance to Error."
+    "Analyzer Status changed from Maintenance to Error.",
+    "timeFlag"
 ]
 
-#Unselected sCode list
+# Unselected sCode list
 Filter_List_sCode = [
     "'03218", "'03004", "'02083", "'02025", "'03215", "'03188", "'02055",
     "'03184", "'01285", "'01336", "'02077", "'03007", "'03014", "'00056",
@@ -151,7 +155,7 @@ Filter_List_sCode = [
 03010: Placement error
 '''
 
-#Selected funcArea/eType list
+# Selected funcArea/eType list
 Filter_List_funcArea = ["Analyzer", "Materials"]
 Filter_List_eType = ["ERROR", "INFORMATION"]
 
@@ -172,7 +176,7 @@ def info_filter(infostr):
 
 
 def replace_desp(desp):
-    #if "分析仪状态从" != desp[0:6]:
+    # if "分析仪状态从" != desp[0:6]:
     #    return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
@@ -180,7 +184,7 @@ def replace_desp(desp):
 
 
 def logaddsq(logfullpath, filter_col,
-             log_days):  #log_days: log reserve days; 0 means all.
+             log_days):  # log_days: log reserve days; 0 means all.
     print(logfullpath)
     tlog0 = pd.read_csv(logfullpath,
                         sep="\t",
@@ -189,14 +193,14 @@ def logaddsq(logfullpath, filter_col,
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
-    #去除首尾两月数据
+    # 去除首尾两月数据
     if dropHeadTail:
         tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
         start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
-        tlog0 = tlog0[tlog0.year_month != start_month]  #去除首月
-        tlog0 = tlog0[tlog0.year_month != end_month]  #去除尾月
+        tlog0 = tlog0[tlog0.year_month != start_month]  # 去除首月
+        tlog0 = tlog0[tlog0.year_month != end_month]  # 去除尾月
         tlog0.drop(["year_month"], axis=1, inplace=True)
-    #筛选掉无用数据
+    # 筛选掉无用数据
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
                   & (tlog0.eType.isin(Filter_List_eType))]
     tlog0["sDescription"] = tlog0["sDescription"].apply(replace_desp)
@@ -204,13 +208,19 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
-    tlog0 = tlog0.append(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"], "dateTime": [log_gen_time, log_gen_time], "eType": ["ERROR", "ERROR"], "funcArea": ["timeFlag", "timeFlag"], "sDescription": ["timeFlag", "timeFlag"], "sFilename": ["timeFlag", "timeFlag"],
-                                       "nSubCode": ["timeFlag", "timeFlag"], "eCPU": ["timeFlag", "timeFlag"]}))
+    tlog0 = tlog0.append(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
+                                       "dateTime": [log_gen_time, log_gen_time],
+                                       "eType": ["ERROR", "ERROR"],
+                                       "funcArea": ["timeFlag", "timeFlag"],
+                                       "sDescription": ["timeFlag", "timeFlag"],
+                                       "sFilename": ["timeFlag", "timeFlag"],
+                                       "nSubCode": ["timeFlag", "timeFlag"],
+                                       "eCPU": ["timeFlag", "timeFlag"]}))
     tlog0.reset_index(drop=True, inplace=True)
     tlog1 = cp.copy(tlog0)
     tlog1.index = tlog1.index + 1
     logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
-    #保留参数指定天数的日志
+    # 保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
             logwithsq["dateTime_x"])) / pd.Timedelta(1, "d") - log_days < 0
@@ -222,7 +232,7 @@ loglist = file_filter(logpath, ".txt")
 for i in range(len(loglist)):
     print("Starting load file :{}".format(i + 1))
     logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter,
-                       peroid)  #peroid: log reserve days; 0 means all.
+                       peroid)  # peroid: log reserve days; 0 means all.
     logtemp["TopSn"] = loglist[i][:-4]
     if i == 0:
         logonefile = logtemp
@@ -252,15 +262,17 @@ logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
 logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
-                                                          if x < 2 else "N")
-logonefile.drop([
-    "eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ",
-    "eCPUSQ"
-],
+                                                         if x < 2 else "N")
+logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ", "eCPUSQ"],
                 axis=1,
                 inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
 logonefile["log_days"] = peroid
+
+if lightMode == True:
+    logonefile = logonefile[(logonefile.sDescriptionSQ.isin(
+        Filter_List_sDescription)) & (logonefile["Timediff<2s"] == "Y")]
+logonefile.reset_index(drop=True, inplace=True)
 logonefile.to_csv((logpath + "\\one.csv"),
                   index_label="Index",
                   encoding="utf_8")
