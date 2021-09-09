@@ -1,7 +1,6 @@
 # Modify 2021/09/08 09:16
 
 import pandas as pd
-import copy as cp
 import os
 import datetime as dt
 import tkinter.filedialog as tk
@@ -23,13 +22,14 @@ while True:
 
 peroid = 0  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
-lightMode = False
+lightMode = False  # 是否删除ES/IES之外的所有纪录
+
+keepDays = "wholeLogs" if peroid == 0 else peroid
 
 print("\n")
 print("*" * 150)
 print("Log working folder>>:")
 print(logpath)
-keepDays = "wholeLogs" if peroid == 0 else peroid
 print(f"保留的日志天数：{keepDays}")
 print(f"去除首尾两月：{dropHeadTail}")
 print(f"精简的日志: {lightMode}")
@@ -217,7 +217,7 @@ def logaddsq(logfullpath, filter_col,
                                        "nSubCode": ["timeFlag", "timeFlag"],
                                        "eCPU": ["timeFlag", "timeFlag"]}))
     tlog0.reset_index(drop=True, inplace=True)
-    tlog1 = cp.copy(tlog0)
+    tlog1 = tlog0.copy()
     tlog1.index = tlog1.index + 1
     logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
     # 保留参数指定天数的日志
