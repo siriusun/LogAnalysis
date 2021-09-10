@@ -13,13 +13,13 @@ function New-Folder {
 $fses = Import-Csv "ServiceFSElist.csv"
 $fseDic = @{}
 
-foreach ($_ in $fses) {
-    $fseDic[$_.NameCN] = $_.Area
+foreach ($fse in $fses) {
+    $fseDic[$fse.NameCN] = $fse.Area
 }
 
-$area = "凝血维修基本知识月考2021.xx-北区", "凝血维修基本知识月考2021.xx-南区", "凝血维修基本知识月考2021.xx-西区", "凝血维修基本知识月考2021.xx-东1区", "凝血维修基本知识月考2021.xx-东2区"
-foreach ($_ in $area) {
-    New-Folder $_
+$areas = "凝血维修基本知识月考2021.xx-北区", "凝血维修基本知识月考2021.xx-南区", "凝血维修基本知识月考2021.xx-西区", "凝血维修基本知识月考2021.xx-东1区", "凝血维修基本知识月考2021.xx-东2区"
+foreach ($area in $areas) {
+    New-Folder $area
 }
 
 $papers = Get-ChildItem -Path $work_pth -Recurse -Filter *.docx
