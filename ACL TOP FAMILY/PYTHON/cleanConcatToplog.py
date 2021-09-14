@@ -20,9 +20,11 @@ while True:
     else:
         print("Input 1 or 2")
 
-peroid = 0  # log reserve days; 0 means all.
+peroid = 200  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
 lightMode = False  # 是否删除ES/IES之外的所有纪录
+
+fileLine = {} # 文件行数空字典
 
 keepDays = "wholeLogs" if peroid == 0 else peroid
 
@@ -190,6 +192,7 @@ def logaddsq(logfullpath, filter_col,
                         sep="\t",
                         encoding="utf_16_le",
                         usecols=filter_col)
+    fileLine[logfullpath] = len(tlog0)
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
@@ -279,4 +282,7 @@ logonefile.to_csv((logpath + "\\one.csv"),
 print("Done")
 
 print(dt.datetime.now() - start)
+fileSeries = pd.Series(fileLine)
+fileSeries.to_csv(logpath + "\\fileLine.csv")
+
 os.system("pause")
