@@ -192,10 +192,10 @@ def logaddsq(logfullpath, filter_col,
                         sep="\t",
                         encoding="utf_16_le",
                         usecols=filter_col)
-    fileLine[logfullpath] = len(tlog0)
+    log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
+    fileLine[logfullpath] = [len(tlog0),log_gen_time]
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
-    log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
     # 去除首尾两月数据
     if dropHeadTail:
         tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
@@ -282,6 +282,7 @@ logonefile.to_csv((logpath + "\\one.csv"),
 print("Done")
 
 print(dt.datetime.now() - start)
+
 fileSeries = pd.Series(fileLine)
 fileSeries.to_csv(logpath + "\\fileLine.csv")
 
