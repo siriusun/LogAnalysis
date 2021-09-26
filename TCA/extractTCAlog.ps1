@@ -56,7 +56,7 @@ function Get-TcaLog {
 
 Write-Host 
 "*********************************
-***    TcaLogs tools V2.1     ***
+***    TcaLogs tools V3.0     ***
 *********************************`n`n"
 Write-Host "Starting extract TcaLogs" -ForegroundColor Yellow -BackgroundColor Black
 
