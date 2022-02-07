@@ -1,4 +1,4 @@
-# Modify 2021/09/08 09:16
+1# Modify 2021/09/08 09:16
 
 import pandas as pd
 import os
@@ -211,14 +211,14 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
-    tlog0 = tlog0.concat(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
+    tlog0 = pd.concat([tlog0,pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
                                        "dateTime": [log_gen_time, log_gen_time],
                                        "eType": ["ERROR", "ERROR"],
                                        "funcArea": ["timeFlag", "timeFlag"],
                                        "sDescription": ["timeFlag", "timeFlag"],
                                        "sFilename": ["timeFlag", "timeFlag"],
                                        "nSubCode": ["timeFlag", "timeFlag"],
-                                       "eCPU": ["timeFlag", "timeFlag"]}))
+                                       "eCPU": ["timeFlag", "timeFlag"]})])
     tlog0.reset_index(drop=True, inplace=True)
     tlog1 = tlog0.copy()
     tlog1.index = tlog1.index + 1
@@ -240,7 +240,7 @@ for i in range(len(loglist)):
     if i == 0:
         logonefile = logtemp
         continue
-    logonefile = logonefile.concat(logtemp, colfilter)
+    logonefile = pd.concat([logonefile, logtemp])
 
 logonefile = logonefile.rename(
     columns={
