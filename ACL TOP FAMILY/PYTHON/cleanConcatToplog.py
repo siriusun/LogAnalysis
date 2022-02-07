@@ -20,9 +20,9 @@ while True:
     else:
         print("Input 1 or 2")
 
-peroid = 200  # log reserve days; 0 means all.
+peroid = 60  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
-lightMode = False  # 是否删除ES/IES之外的所有纪录
+lightMode = True  # 是否删除ES/IES之外的所有纪录
 
 fileLine = {} # 文件行数空字典
 
@@ -211,7 +211,7 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
-    tlog0 = tlog0.append(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
+    tlog0 = tlog0.concat(pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
                                        "dateTime": [log_gen_time, log_gen_time],
                                        "eType": ["ERROR", "ERROR"],
                                        "funcArea": ["timeFlag", "timeFlag"],
@@ -240,7 +240,7 @@ for i in range(len(loglist)):
     if i == 0:
         logonefile = logtemp
         continue
-    logonefile = logonefile.append(logtemp, colfilter)
+    logonefile = logonefile.concat(logtemp, colfilter)
 
 logonefile = logonefile.rename(
     columns={
