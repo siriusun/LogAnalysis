@@ -20,9 +20,9 @@ while True:
     else:
         print("Input 1 or 2")
 
-peroid = 60  # log reserve days; 0 means all.
+peroid = 200  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
-lightMode = True  # 是否删除ES/IES之外的所有纪录
+lightMode = False  # 是否删除ES/IES之外的所有纪录
 
 fileLine = {} # 文件行数空字典
 
