@@ -37,14 +37,16 @@ foreach ($area in $areas) {
 foreach ($paper in $papers){
 	$nameCN = $paper.Name.Split("】")[0].Split("【")[1]
 	$fse =  ($fseList | Where-Object -Property NameCN -Like $nameCN).Area
-    switch ($fse) {
-        "North" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx North") }
-        "South" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx South") }
-        "West"  { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx West" ) }
-        "East1" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx East1") }
-        "East2" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx East2") }
-        "Henan" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx Henan") }
+    if($null -eq $fse){
+        "`n"
+        Write-Host ($nameCN + " not found")
+        continue
+    }
+    foreach($area in $areas){ 
+        if($area -Like ("*" + $fse)){
+            Move-Item -Path $paper.Fullname -Destination ($work_pth + "\" + $area)
+        }
     }
 }
-"Any key to exit..."
+"`nAny key to exit..."
 [System.Console]::ReadKey() | Out-Null ; Exit
