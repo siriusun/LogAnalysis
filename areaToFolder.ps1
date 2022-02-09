@@ -10,26 +10,41 @@ function New-Folder {
     New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
 
-$fses = Import-Csv "ServiceFSElist.csv"
-$fseDic = @{}
+"Any key to continue..."
+[System.Console]::ReadKey() | Out-Null
 
-foreach ($fse in $fses) {
-    $fseDic[$fse.NameCN] = $fse.Area
+$fseList = Import-Csv "ServiceFSElist.csv"
+
+$areas = 
+        "Hemo Monthly Exam 2022-xx North", 
+        "Hemo Monthly Exam 2022-xx South", 
+        "Hemo Monthly Exam 2022-xx West" , 
+        "Hemo Monthly Exam 2022-xx East1", 
+        "Hemo Monthly Exam 2022-xx East2",
+        "Hemo Monthly Exam 2022-xx Henan"
+
+$papers = Get-ChildItem -Path $work_pth -Recurse -Filter *.docx
+
+if ($null -eq $papers){
+    "`nNo report founded, any key to exit..."
+    [System.Console]::ReadKey() | Out-Null ; Exit
 }
 
-$areas = "凝血维修基本知识月考2021.xx-北区", "凝血维修基本知识月考2021.xx-南区", "凝血维修基本知识月考2021.xx-西区", "凝血维修基本知识月考2021.xx-东1区", "凝血维修基本知识月考2021.xx-东2区"
 foreach ($area in $areas) {
     New-Folder $area
 }
 
-$papers = Get-ChildItem -Path $work_pth -Recurse -Filter *.docx
 foreach ($paper in $papers){
-    $fse = $fseDic[$paper.Name.Split("】")[0].Split("【")[1]]
+	$nameCN = $paper.Name.Split("】")[0].Split("【")[1]
+	$fse =  ($fseList | Where-Object -Property NameCN -Like $nameCN).Area
     switch ($fse) {
-        "North" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\凝血维修基本知识月考2021.xx-北区") }
-        "South" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\凝血维修基本知识月考2021.xx-南区") }
-        "West" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\凝血维修基本知识月考2021.xx-西区") }
-        "East1" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\凝血维修基本知识月考2021.xx-东1区") }
-        "East2" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\凝血维修基本知识月考2021.xx-东2区") }
+        "North" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx North") }
+        "South" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx South") }
+        "West"  { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx West" ) }
+        "East1" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx East1") }
+        "East2" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx East2") }
+        "Henan" { Move-Item -Path $paper.Fullname -Destination ($work_pth + "\Hemo Monthly Exam 2022-xx Henan") }
     }
 }
+"Any key to exit..."
+[System.Console]::ReadKey() | Out-Null ; Exit
