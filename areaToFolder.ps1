@@ -1,5 +1,6 @@
 $work_pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $work_pth
+
 function New-Folder {
     param (
         $NewFolderName
