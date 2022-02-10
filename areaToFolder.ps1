@@ -9,7 +9,7 @@ function New-Folder {
     }
     New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
-
+"Start processing exam report to area folder..."
 "Any key to continue..."
 [System.Console]::ReadKey() | Out-Null
 
@@ -36,14 +36,15 @@ foreach ($area in $areas) {
 
 foreach ($paper in $papers){
 	$nameCN = $paper.Name.Split("】")[0].Split("【")[1]
-	$fse =  ($fseList | Where-Object -Property NameCN -Like $nameCN).Area
-    if($null -eq $fse){
+    $fseIndex = $fseList.NameCN.IndexOf($nameCN)
+    if($fseIndex -lt 0){
         "`n"
         Write-Host ($nameCN + " not found")
         continue
     }
+    $fseArea = $fseList.Area[$fseIndex]
     foreach($area in $areas){ 
-        if($area -Like ("*" + $fse)){
+        if($area -Like ("*" + $fseArea)){
             Move-Item -Path $paper.Fullname -Destination ($work_pth + "\" + $area)
         }
     }
