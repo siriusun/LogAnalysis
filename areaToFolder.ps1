@@ -9,20 +9,14 @@ function New-Folder {
     }
     New-Item -Path $work_pth -ItemType Directory -Name $NewFolderName
 }
+
 "Start processing exam report to area folder..."
 "Any key to continue..."
 [System.Console]::ReadKey() | Out-Null
 
+$prefixed = "Hemo monthly exam 2022-xx "
 $fseList = Import-Csv "ServiceFSElist.csv"
-
-$areas = 
-        "Hemo Monthly Exam 2022-xx North", 
-        "Hemo Monthly Exam 2022-xx South", 
-        "Hemo Monthly Exam 2022-xx West" , 
-        "Hemo Monthly Exam 2022-xx East1", 
-        "Hemo Monthly Exam 2022-xx East2",
-        "Hemo Monthly Exam 2022-xx Henan"
-
+$areas = ("North", "South", "West" , "East1", "East2","Henan")
 $papers = Get-ChildItem -Path $work_pth -Recurse -Filter *.docx
 
 if ($null -eq $papers){
@@ -31,7 +25,7 @@ if ($null -eq $papers){
 }
 
 foreach ($area in $areas) {
-    New-Folder $area
+    New-Folder ($prefixed + $area)
 }
 
 foreach ($paper in $papers){
@@ -43,11 +37,8 @@ foreach ($paper in $papers){
         continue
     }
     $fseArea = $fseList.Area[$fseIndex]
-    foreach($area in $areas){ 
-        if($area -Like ("*" + $fseArea)){
-            Move-Item -Path $paper.Fullname -Destination ($work_pth + "\" + $area)
-        }
-    }
+    Move-Item -Path $paper.Fullname -Destination ($work_pth + "\" + $prefixed + $fseArea)
 }
+
 "`nAny key to exit..."
 [System.Console]::ReadKey() | Out-Null ; Exit
