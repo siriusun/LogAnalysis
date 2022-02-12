@@ -17,10 +17,10 @@ function New-Folder {
 
 $prefixed = "Hemo monthly exam 2022-xx "
 $fseList = Import-Csv "ServiceFSElist.csv"
-$areas = ("North", "South", "West" , "East1", "East2","Henan")
+$areas = ("North", "South", "West" , "East1", "East2", "Henan")
 $papers = Get-ChildItem -Path $work_pth -Recurse -Filter *.docx
 
-if ($null -eq $papers){
+if ($null -eq $papers) {
     "`nNo report founded, any key to exit..."
     [System.Console]::ReadKey() | Out-Null ; Exit
 }
@@ -29,10 +29,10 @@ foreach ($area in $areas) {
     New-Folder ($prefixed + $area)
 }
 
-foreach ($paper in $papers){
-	$nameCN = $paper.Name.Split("】")[0].Split("【")[1]
+foreach ($paper in $papers) {
+    $nameCN = $paper.Name.Split("】")[0].Split("【")[1]
     $fseIndex = $fseList.NameCN.IndexOf($nameCN)
-    if($fseIndex -lt 0){
+    if ($fseIndex -lt 0) {
         "`n"
         Write-Host ($nameCN + " not found")
         continue
