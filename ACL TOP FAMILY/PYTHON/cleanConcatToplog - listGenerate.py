@@ -1,10 +1,10 @@
-1# Modify 2021/09/08 09:16
+# Modify 2021/09/08 09:16
 
-import pandas as pd
-import os
-import datetime as dt
-import tkinter.filedialog as tk
 import tkinter
+import tkinter.filedialog as tk
+import datetime as dt
+import os
+import pandas as pd
 
 while True:
     select_input = input(
@@ -24,7 +24,7 @@ peroid = 200  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
 lightMode = False  # 是否删除ES/IES之外的所有纪录
 
-fileLine = {} # 文件行数空字典
+fileLine = {}  # 文件行数空字典
 
 keepDays = "wholeLogs" if peroid == 0 else peroid
 
@@ -178,8 +178,8 @@ def info_filter(infostr):
 
 
 def replace_desp(desp):
-    # if "分析仪状态从" != desp[0:6]:
-    #    return desp
+    if "分析仪状态从" in desp:
+        return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
     return desp
@@ -194,12 +194,14 @@ def logaddsq(logfullpath, filter_col,
                         encoding="utf_16_le",
                         usecols=filter_col)
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
-    fileLine[logfullpath] = [len(tlog0),log_gen_time]
+    fileLine[logfullpath] = [len(tlog0), log_gen_time]
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     # 去除首尾两月数据
     if dropHeadTail:
-        tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
+        #tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
+        tlog0["year_month"] = pd.to_datetime(
+            tlog0["dateTime"]).strftime("%Y-%m-%d")
         start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
         tlog0 = tlog0[tlog0.year_month != start_month]  # 去除首月
         tlog0 = tlog0[tlog0.year_month != end_month]  # 去除尾月
@@ -212,22 +214,26 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
-    tlog0 = pd.concat([tlog0,pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
-                                       "dateTime": [log_gen_time, log_gen_time],
-                                       "eType": ["ERROR", "ERROR"],
-                                       "funcArea": ["timeFlag", "timeFlag"],
-                                       "sDescription": ["timeFlag", "timeFlag"],
-                                       "sFilename": ["timeFlag", "timeFlag"],
-                                       "nSubCode": ["timeFlag", "timeFlag"],
-                                       "eCPU": ["timeFlag", "timeFlag"]})])
+    tlog0 = pd.concat([tlog0, pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
+                                           "dateTime": [log_gen_time, log_gen_time],
+                                            "eType": ["ERROR", "ERROR"],
+                                            "funcArea": ["timeFlag", "timeFlag"],
+                                            "sDescription": ["timeFlag", "timeFlag"],
+                                            "sFilename": ["timeFlag", "timeFlag"],
+                                            "nSubCode": ["timeFlag", "timeFlag"],
+                                            "eCPU": ["timeFlag", "timeFlag"]})])
     tlog0.reset_index(drop=True, inplace=True)
     tlog1 = tlog0.copy()
+    tlog0.drop(["eType", "funcArea", "sFilename", "nSubCode", "eCPU"],
+               axis=1,
+               inplace=True)
     tlog1.index = tlog1.index + 1
-    logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
+    logwithsq = pd.merge(tlog1, tlog0, left_index=True,
+                         right_index=True, suffixes=("", "SQ"))
     # 保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
-            logwithsq["dateTime_x"])) / pd.Timedelta(1, "d") - log_days < 0
+            logwithsq["dateTime"])) / pd.Timedelta(1, "d") - log_days < 0
         logwithsq = logwithsq[logwithsq.log_days == True]
     if "J.txt" in logfullpath or "j.txt" in logfullpath:
         logwithsq["TopSn"] = logfullpath[-14:-4]
@@ -241,41 +247,12 @@ logonefile = [logaddsq((logpath + "\\" + loglist[i]), colfilter,
                        peroid, i) for i in range(len(loglist))]
 logonefile = pd.concat(logonefile)
 
-"""
-for i in range(len(loglist)):
-    print("Starting load file :{}".format(i + 1))
-    logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter,
-                       peroid)  # peroid: log reserve days; 0 means all.
-    if i == 0:
-        logonefile = logtemp
-        continue
-    logonefile = pd.concat([logonefile, logtemp])
-"""
-logonefile = logonefile.rename(
-    columns={
-        "sCode_x": "sCode",
-        "eType_x": "eType",
-        "dateTime_x": "dateTime",
-        "funcArea_x": "funcArea",
-        "sDescription_x": "sDescription",
-        "sFilename_x": "sFilename",
-        "nSubCode_x": "nSubCode",
-        "eCPU_x": "eCPU",
-        "sCode_y": "sCodeSQ",
-        "eType_y": "eTypeSQ",
-        "dateTime_y": "dateTimeSQ",
-        "funcArea_y": "funcAreaSQ",
-        "sDescription_y": "sDescriptionSQ",
-        "sFilename_y": "sFilenameSQ",
-        "nSubCode_y": "nSubCodeSQ",
-        "eCPU_y": "eCPUSQ"
-    })
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
 logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                          if x < 2 else "N")
-logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ", "eCPUSQ"],
+logonefile.drop(["dateTimeSQ"],
                 axis=1,
                 inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
@@ -285,7 +262,7 @@ if lightMode == True:
     logonefile = logonefile[(logonefile.sDescriptionSQ.isin(
         Filter_List_sDescription)) & (logonefile["Timediff<2s"] == "Y")]
 logonefile.reset_index(drop=True, inplace=True)
-logonefile.to_csv((logpath + "\\one.csv"),
+logonefile.to_csv((logpath + "\\one1.csv"),
                   index_label="Index",
                   encoding="utf_8")
 print("Done")
