@@ -178,7 +178,7 @@ def info_filter(infostr):
 
 
 def replace_desp(desp):
-    if "分析仪状态从" in desp:
+    if not "分析仪状态从" in desp:
         return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
