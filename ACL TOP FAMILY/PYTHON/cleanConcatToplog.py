@@ -1,10 +1,10 @@
-1# Modify 2021/09/08 09:16
+# Modify 2022/02/14
 
-import pandas as pd
-import os
-import datetime as dt
-import tkinter.filedialog as tk
 import tkinter
+import tkinter.filedialog as tk
+import datetime as dt
+import os
+import pandas as pd
 
 while True:
     select_input = input(
@@ -24,7 +24,7 @@ peroid = 200  # log reserve days; 0 means all.
 dropHeadTail = False  # 是否去除首尾两月数据,默认不去
 lightMode = False  # 是否删除ES/IES之外的所有纪录
 
-fileLine = {} # 文件行数空字典
+fileLine = {}  # 文件行数空字典
 
 keepDays = "wholeLogs" if peroid == 0 else peroid
 
@@ -193,7 +193,7 @@ def logaddsq(logfullpath, filter_col,
                         encoding="utf_16_le",
                         usecols=filter_col)
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
-    fileLine[logfullpath] = [len(tlog0),log_gen_time]
+    fileLine[logfullpath] = [len(tlog0), log_gen_time]
     tlog0 = tlog0.dropna(
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     # 去除首尾两月数据
@@ -211,22 +211,25 @@ def logaddsq(logfullpath, filter_col,
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
     tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
-    tlog0 = pd.concat([tlog0,pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
-                                       "dateTime": [log_gen_time, log_gen_time],
-                                       "eType": ["ERROR", "ERROR"],
-                                       "funcArea": ["timeFlag", "timeFlag"],
-                                       "sDescription": ["timeFlag", "timeFlag"],
-                                       "sFilename": ["timeFlag", "timeFlag"],
-                                       "nSubCode": ["timeFlag", "timeFlag"],
-                                       "eCPU": ["timeFlag", "timeFlag"]})])
-    tlog0.reset_index(drop=True, inplace=True)
+    tlog0 = pd.concat([tlog0, pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
+                                           "dateTime": [log_gen_time, log_gen_time],
+                                            "eType": ["ERROR", "ERROR"],
+                                            "funcArea": ["timeFlag", "timeFlag"],
+                                            "sDescription": ["timeFlag", "timeFlag"],
+                                            "sFilename": ["timeFlag", "timeFlag"],
+                                            "nSubCode": ["timeFlag", "timeFlag"],
+                                            "eCPU": ["timeFlag", "timeFlag"]})], ignore_index=True)
     tlog1 = tlog0.copy()
+    tlog0.drop(["eType", "funcArea", "sFilename", "nSubCode", "eCPU"],
+               axis=1,
+               inplace=True)
     tlog1.index = tlog1.index + 1
-    logwithsq = pd.merge(tlog1, tlog0, left_index=True, right_index=True)
+    logwithsq = pd.merge(tlog1, tlog0, left_index=True,
+                         right_index=True, suffixes=("", "SQ"))
     # 保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
-            logwithsq["dateTime_x"])) / pd.Timedelta(1, "d") - log_days < 0
+            logwithsq["dateTime"])) / pd.Timedelta(1, "d") - log_days < 0
         logwithsq = logwithsq[logwithsq.log_days == True]
     return logwithsq
 
@@ -242,33 +245,12 @@ for i in range(len(loglist)):
         continue
     logonefile = pd.concat([logonefile, logtemp])
 
-logonefile = logonefile.rename(
-    columns={
-        "sCode_x": "sCode",
-        "eType_x": "eType",
-        "dateTime_x": "dateTime",
-        "funcArea_x": "funcArea",
-        "sDescription_x": "sDescription",
-        "sFilename_x": "sFilename",
-        "nSubCode_x": "nSubCode",
-        "eCPU_x": "eCPU",
-        "sCode_y": "sCodeSQ",
-        "eType_y": "eTypeSQ",
-        "dateTime_y": "dateTimeSQ",
-        "funcArea_y": "funcAreaSQ",
-        "sDescription_y": "sDescriptionSQ",
-        "sFilename_y": "sFilenameSQ",
-        "nSubCode_y": "nSubCodeSQ",
-        "eCPU_y": "eCPUSQ"
-    })
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
 logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                          if x < 2 else "N")
-logonefile.drop(["eTypeSQ", "funcAreaSQ", "dateTimeSQ", "sFilenameSQ", "nSubCodeSQ", "eCPUSQ"],
-                axis=1,
-                inplace=True)
+logonefile.drop(["dateTimeSQ"], axis=1, inplace=True)
 logonefile.insert(0, "TopSn", logonefile.pop("TopSn"))
 logonefile["log_days"] = peroid
 
