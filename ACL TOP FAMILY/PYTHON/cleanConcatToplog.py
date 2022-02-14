@@ -168,18 +168,9 @@ def file_filter(filedir, keyword):
     return targetfiles
 
 
-'''
-def info_filter(infostr):
-    if ("ERROR:" in infostr) or (infostr in Filter_List_sDescription):
-        return "Y"
-    else:
-        return "N"
-'''
-
-
 def replace_desp(desp):
-    # if "分析仪状态从" != desp[0:6]:
-    #    return desp
+    if not "分析仪状态从" in desp:
+        return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
     return desp

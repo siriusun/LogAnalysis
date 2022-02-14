@@ -1,4 +1,4 @@
-# Modify 2021/09/08 09:16
+# Modify 2022/02/14
 
 import tkinter
 import tkinter.filedialog as tk
@@ -166,15 +166,6 @@ def file_filter(filedir, keyword):
     allfilelist = os.listdir(filedir)
     targetfiles = [file for file in allfilelist if keyword in file]
     return targetfiles
-
-
-'''
-def info_filter(infostr):
-    if ("ERROR:" in infostr) or (infostr in Filter_List_sDescription):
-        return "Y"
-    else:
-        return "N"
-'''
 
 
 def replace_desp(desp):
