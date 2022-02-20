@@ -1,10 +1,10 @@
 # Modify 2022/02/14
 
-import tkinter
-import tkinter.filedialog as tk
-import datetime as dt
-import os
 import pandas as pd
+import os
+import datetime as dt
+import tkinter.filedialog as tk
+import tkinter
 
 while True:
     select_input = input(
