@@ -169,7 +169,7 @@ def file_filter(filedir, keyword):
 
 
 def replace_desp(desp):
-    if not "分析仪状态从" in desp:
+    if "分析仪状态从" not in desp:
         return desp
     for (cn, en) in replace_dic.items():
         desp = desp.replace(cn, en)
@@ -190,9 +190,7 @@ def logaddsq(logfullpath, filter_col,
         subset=["sCode", "dateTime", "eType", "funcArea", "sDescription"])
     # 去除首尾两月数据
     if dropHeadTail:
-        #tlog0["year_month"] = tlog0["dateTime"].astype("str").str[0:7]
-        tlog0["year_month"] = pd.to_datetime(
-            tlog0["dateTime"]).strftime("%Y-%m-%d")
+        tlog0["year_month"] = tlog0["dateTime"].str.slice(0, 7)
         start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
         tlog0 = tlog0[tlog0.year_month != start_month]  # 去除首月
         tlog0 = tlog0[tlog0.year_month != end_month]  # 去除尾月
@@ -212,8 +210,7 @@ def logaddsq(logfullpath, filter_col,
                                             "sDescription": ["timeFlag", "timeFlag"],
                                             "sFilename": ["timeFlag", "timeFlag"],
                                             "nSubCode": ["timeFlag", "timeFlag"],
-                                            "eCPU": ["timeFlag", "timeFlag"]})])
-    tlog0.reset_index(drop=True, inplace=True)
+                                            "eCPU": ["timeFlag", "timeFlag"]})], ignore_index=True)
     tlog1 = tlog0.copy()
     tlog0.drop(["eType", "funcArea", "sFilename", "nSubCode", "eCPU"],
                axis=1,
@@ -224,7 +221,7 @@ def logaddsq(logfullpath, filter_col,
     # 保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
-            logwithsq["dateTime"])) / pd.Timedelta(1, "d") - log_days < 0
+            logwithsq["dateTime"])) / pd.Timedelta("1d") - log_days < 0
         logwithsq = logwithsq[logwithsq.log_days == True]
     if "J.txt" in logfullpath or "j.txt" in logfullpath:
         logwithsq["TopSn"] = logfullpath[-14:-4]
@@ -240,7 +237,7 @@ logonefile = pd.concat(logonefile)
 
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
-    pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
+    pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta("1s")
 logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                          if x < 2 else "N")
 logonefile.drop(["dateTimeSQ"],
@@ -252,8 +249,9 @@ logonefile["log_days"] = peroid
 if lightMode == True:
     logonefile = logonefile[(logonefile.sDescriptionSQ.isin(
         Filter_List_sDescription)) & (logonefile["Timediff<2s"] == "Y")]
+
 logonefile.reset_index(drop=True, inplace=True)
-logonefile.to_csv((logpath + "\\one1.csv"),
+logonefile.to_csv((logpath + "\\one.csv"),
                   index_label="Index",
                   encoding="utf_8")
 print("Done")
