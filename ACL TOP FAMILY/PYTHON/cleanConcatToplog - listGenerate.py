@@ -191,7 +191,7 @@ def logaddsq(logfullpath, filter_col,
     # 去除首尾两月数据
     if dropHeadTail:
         tlog0["year_month"] = tlog0["dateTime"].str.slice(0, 7)
-        start_month, end_month = tlog0.iloc[1, 8], tlog0.iloc[-1, 8]
+        start_month, end_month = tlog0.iloc[0, 8], tlog0.iloc[-1, 8]
         tlog0 = tlog0[tlog0.year_month != start_month]  # 去除首月
         tlog0 = tlog0[tlog0.year_month != end_month]  # 去除尾月
         tlog0.drop(["year_month"], axis=1, inplace=True)
