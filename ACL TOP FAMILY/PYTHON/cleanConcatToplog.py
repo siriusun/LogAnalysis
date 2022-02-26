@@ -197,7 +197,14 @@ def logaddsq(logfullpath, filter_col,
     # 筛选掉无用数据
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
                   & (tlog0.eType.isin(Filter_List_eType))]
-    tlog0["sDescription"] = tlog0["sDescription"].apply(replace_desp)
+    tlog0["sDescription"] = tlog0["sDescription"].map(replace_desp)
+    
+    "Below is another way to translate analyzer status change, same effect to the top line."
+    """
+    condition = tlog0.sDescription.str.startswith("分析仪状态从")
+    tlog0.loc[condition, "sDescription"] = tlog0.loc[condition, "sDescription"].map(replace_desp)
+    """
+    
     tlog0 = tlog0[(tlog0.eType == "ERROR")
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
