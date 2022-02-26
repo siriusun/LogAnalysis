@@ -199,7 +199,7 @@ def logaddsq(logfullpath, filter_col,
                   & (tlog0.eType.isin(Filter_List_eType))]
     tlog0["sDescription"] = tlog0["sDescription"].map(replace_desp)
     
-    "Below is another way to translate analyzer status change, same effect to the top line."
+    # Below is another way to translate analyzer status change, same effect to the top line.
     """
     condition = tlog0.sDescription.str.startswith("分析仪状态从")
     tlog0.loc[condition, "sDescription"] = tlog0.loc[condition, "sDescription"].map(replace_desp)
