@@ -227,7 +227,7 @@ def logaddsq(logfullpath, filter_col,
     # 保留参数指定天数的日志
     if log_days != 0:
         logwithsq["log_days"] = (log_gen_time - pd.to_datetime(
-            logwithsq["dateTime"])) / pd.Timedelta(1, "d") - log_days < 0
+            logwithsq["dateTime"])) / pd.Timedelta("1d") - log_days < 0
         logwithsq = logwithsq[logwithsq.log_days == True]
     return logwithsq
 
@@ -245,7 +245,7 @@ for i in range(len(loglist)):
 
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
-    pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta(1, "S")
+    pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta("1s")
 logonefile["Timediff<2s"] = logonefile["Timediff"].apply(lambda x: "Y"
                                                          if x < 2 else "N")
 logonefile.drop(["dateTimeSQ"], axis=1, inplace=True)
