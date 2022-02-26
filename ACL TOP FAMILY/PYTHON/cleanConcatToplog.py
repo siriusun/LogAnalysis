@@ -118,7 +118,7 @@ Filter_List_sDescription = [
 ]
 
 # Unselected sCode list
-Filter_List_sCode = [
+Unselect_List_sCode = [
     "'03218", "'03004", "'02083", "'02025", "'03215", "'03188", "'02055",
     "'03184", "'01285", "'01336", "'02077", "'03007", "'03014", "'00056",
     "'03013", "'03084", "'03016", "'03085", "'03211", "'03020", "'03019",
@@ -208,7 +208,7 @@ def logaddsq(logfullpath, filter_col,
     tlog0 = tlog0[(tlog0.eType == "ERROR")
                   | ((tlog0.eType == "INFORMATION")
                      & (tlog0.sDescription.isin(Filter_List_sDescription)))]
-    tlog0 = tlog0[~tlog0.sCode.isin(Filter_List_sCode)]
+    tlog0 = tlog0[~tlog0.sCode.isin(Unselect_List_sCode)]
     tlog0 = pd.concat([tlog0, pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
                                            "dateTime": [log_gen_time, log_gen_time],
                                             "eType": ["ERROR", "ERROR"],
