@@ -6,25 +6,6 @@ $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
 $allLog = "y" #选择Y导出所有日志，否则只导出一个
 
-<#
-给所有的LOG加上序号
-$TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") -Filter TCALOG_167*
-
-foreach ($TcaLog in $TcaLogs) {
-    if ($TcaLog.Name.Split("_")[1][-4] -eq "-") {
-        $Order = "H" + (-join $TcaLog.Name.Split("_")[1][-3..-1])
-    }
-    else {
-        $Order = "H0" + (-join $TcaLog.Name.Split("_")[1][-2..-1])
-    }
-    $NewSortName = $Order.ToString() + "_" + $TcaLog.Name.Replace("167", "H167")
-    Write-Host $TcaLog.FullName
-    Rename-Item -Path $TcaLog.FullName -NewName $NewSortName
-}
-"Order added, Any Key to Continue..."
-[System.Console]::ReadKey() | Out-Null
-#>
-
 function New-Folder ($FolderName) {
     if (Test-Path $FolderName) {
         Remove-Item -Recurse $FolderName
@@ -33,7 +14,7 @@ function New-Folder ($FolderName) {
 }
 
 function Get-TcaLog {
-    $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -like ".zip" -or $_.Extension -like ".rar" -or $_.Extension -like ".7z" } | Sort-Object -Descending
+    $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -in ".zip", ".rar", ".7z" } | Sort-Object -Descending
     $Step1 = 0
     foreach ($TcaLog in $TcaLogs) {
         "-" * 100
@@ -58,11 +39,12 @@ Write-Host
 "*********************************
 ***    TcaLogs tools V3.0     ***
 *********************************`n`n"
+write-host "`nLog Export mode: $allLog`n"
 Write-Host "Starting extract TcaLogs" -ForegroundColor Yellow -BackgroundColor Black
 
-$flag = Read-Host "Y/y for Yes, N/n for Quit"
+$flag = Read-Host "Y/y for Yes, N/n for Generate menu"
 
-if ($flag -ne "N" -and $flag -ne "n") {
+if ($flag -notin "N", "n") {
     New-Folder("TcaLogTemp")
     New-Folder("TcaLogs")
     Get-TcaLog
@@ -115,7 +97,7 @@ while (1) {
     }
     $flag = 0
     $Step2 = 0
-    if ($allLog -eq "y" -or $allLog -eq "Y") {
+    if ($allLog -in "y" ,"Y") {
         foreach ($ZipLog in $LogsFileZips) {
             "-" * 100
             Write-Host ("Start to Extract File :  " + ($LogsFileZips.Count - $Step2).ToString()) -BackgroundColor Black -ForegroundColor Yellow
@@ -147,7 +129,7 @@ while (1) {
     }
     else {
         foreach ($fathersn in $distinct_hosp_hashtable.Keys) {
-            $ZipLog = (Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter "*$fathersn*.zip")[0]
+            $ZipLog = (Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter "*$fathersn*.zip" | Sort-Object -Property Length -Descending)[0]
             "-" * 100
             Write-Host ("Start to Extract File :  " + ($distinct_hosp_hashtable.Count - $Step2).ToString()) -BackgroundColor Black -ForegroundColor Yellow
 
