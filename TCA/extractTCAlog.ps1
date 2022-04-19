@@ -1,4 +1,4 @@
-#此脚本用于批量提取TCA日志 2022-04-15
+#此脚本用于批量提取TCA日志 2022-04-16
 #使用说明，将脚本与日志文件放在同一文件夹运行，日志必须是rar/zip/7z格式，一家医院一个压缩文件
 #日志文件命名要求：TCA_流水线短号_医院中文标准名称_姓名日期.rar/zip
 
@@ -59,7 +59,7 @@ while (1) {
     #选择要输入的Log类型
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : ActionsLog`n2 : ErrorMessages`n3 : BypassTagLogs`n4 : LasPcLogs`n5 : UIdebug`n6 : Quit"
+    "1 : ActionsLog`n2 : ErrorMessages`n3 : BypassTagLogs`n4 : LasPcLogs`n5 : UIdebug`n6 : RouteDebug`n7 : Quit"
     $Select = read-host ">>"
 
     #定义要查找Log关键字
@@ -79,6 +79,9 @@ while (1) {
         $LogTxt = "uidebug*.txt"
     }
     elseif ($Select -eq 6) {
+        $LogTxt = "RouterDebug*.txt"
+    }
+    elseif ($Select -eq 7) {
         Exit
     }
     else {
@@ -87,7 +90,7 @@ while (1) {
     }
 
     #创建Log类型哈希表
-    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs"; "4" = "LasPcLogs"; "5" = "UIdebug"}
+    $SelectTable = @{"1" = "ActionsLog"; "2" = "ErrorMessages"; "3" = "BypassTagLogs"; "4" = "LasPcLogs"; "5" = "UIdebug"; "6" = "RouterDebug"}
     $LogFoldName = $SelectTable[$Select]
 
 
