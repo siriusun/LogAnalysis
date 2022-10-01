@@ -1,4 +1,4 @@
-# Modify 2022/02/14
+# Modify 2022/10/01
 
 import pandas as pd
 import os
@@ -198,16 +198,15 @@ def logaddsq(logfullpath, filter_col,
     tlog0 = tlog0[(tlog0.funcArea.isin(Filter_List_funcArea))
                   & (tlog0.eType.isin(Filter_List_eType))]
     tlog0["sDescription"] = tlog0["sDescription"].map(replace_desp)
-    
+
     # Below is another way to translate analyzer status change, same effect to the top line.
     """
     condition = tlog0.sDescription.str.startswith("分析仪状态从")
     tlog0.loc[condition, "sDescription"] = tlog0.loc[condition, "sDescription"].map(replace_desp)
     """
-    
+
     tlog0 = tlog0[(tlog0.eType == "ERROR")
-                  | ((tlog0.eType == "INFORMATION")
-                     & (tlog0.sDescription.isin(Filter_List_sDescription)))]
+                  | (tlog0.sDescription.isin(Filter_List_sDescription))]
     tlog0 = tlog0[~tlog0.sCode.isin(Unselect_List_sCode)]
     tlog0 = pd.concat([tlog0, pd.DataFrame({"sCode": ["timeFlag", "timeFlag"],
                                            "dateTime": [log_gen_time, log_gen_time],
@@ -243,6 +242,7 @@ for i in range(len(loglist)):
         continue
     logonefile = pd.concat([logonefile, logtemp])
 
+logonefile = logonefile[logonefile.sCode != "'03046"]
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta("1s")
