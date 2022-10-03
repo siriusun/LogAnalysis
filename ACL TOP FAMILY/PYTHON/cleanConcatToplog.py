@@ -1,10 +1,11 @@
-# Modify 2022/10/01
+# Modify 2022/10/03
 
 import pandas as pd
 import os
 import datetime as dt
 import tkinter.filedialog as tk
 import tkinter
+import chardet
 
 while True:
     select_input = input(
@@ -177,11 +178,11 @@ def replace_desp(desp):
 
 
 def logaddsq(logfullpath, filter_col,
-             log_days):  # log_days: log reserve days; 0 means all.
+             log_days,code):  # log_days: log reserve days; 0 means all.
     print(logfullpath)
     tlog0 = pd.read_csv(logfullpath,
                         sep="\t",
-                        encoding="utf_16_le",
+                        encoding=code,
                         usecols=filter_col)
     log_gen_time = pd.to_datetime(tlog0.iloc[-1, 2])
     fileLine[logfullpath] = [len(tlog0), log_gen_time]
@@ -232,10 +233,18 @@ def logaddsq(logfullpath, filter_col,
 
 
 loglist = file_filter(logpath, ".txt")
+
+# 获取文本编码格式
+log0 = open((logpath + "\\" + loglist[0]),"rb")
+log0_content = log0.read()
+log0.close()
+code_dic = chardet.detect(log0_content)
+log_code = code_dic["encoding"]
+
 for i in range(len(loglist)):
     print("Starting load file :{}".format(i + 1))
     logtemp = logaddsq((logpath + "\\" + loglist[i]), colfilter,
-                       peroid)  # peroid: log reserve days; 0 means all.
+                       peroid,log_code)  # peroid: log reserve days; 0 means all.
     logtemp["TopSn"] = loglist[i][:-4]
     if i == 0:
         logonefile = logtemp
@@ -265,5 +274,7 @@ print(dt.datetime.now() - start)
 
 fileSeries = pd.Series(fileLine)
 fileSeries.to_csv(logpath + "\\fileLine.csv")
+
+print(f"encoding: {log_code}")
 
 os.system("pause")
