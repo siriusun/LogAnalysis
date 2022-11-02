@@ -169,7 +169,7 @@ While (1) {
         "-" * 100
         $toplog_DBX = (Get-ChildItem -Recurse -Path ($work_pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
         Write-Host (">>>>: " + ($sn_hashtable.Count - $Step2).ToString() + "  " + $toplog_DBX.FullName) -BackgroundColor Black -ForegroundColor Yellow
-        $toplog_date_SN = $toplog_DBX.Name.Split("_")[7] + "_" + $Sn + ".txt"
+        $toplog_date_SN = "T" + $Sn + "_" + $toplog_DBX.Name.Split("_")[7] + ".txt"
 
         #7z decompress the DBX file to txt_toplog_folder
         7z.exe e $toplog_DBX.FullName -pfixmeplease $text_toplog_fullpath $LogTxt -aos
@@ -187,12 +187,10 @@ While (1) {
         $txt_toplogs = Get-ChildItem -Path ($work_pth + "\$txt_toplog_folder") -Filter *.txt
         foreach ($txt_toplog in $txt_toplogs) {
             $txt_toplog.FullName.ToString()
-            Rename-Item -Path $txt_toplog.FullName ("T" + $txt_toplog.Name.Split("_")[1])
+            Rename-Item -Path $txt_toplog.FullName ($txt_toplog.Name.Split("_")[0] + ".txt")
         }
     }
 }
 Stop-Transcript
 "`n"
 Write-Host "**********  TopLogs Generated  **********" -ForegroundColor Yellow -BackgroundColor Black
-"Any Key to Exit..."
-[System.Console]::ReadKey() | Out-Null ; Exit
