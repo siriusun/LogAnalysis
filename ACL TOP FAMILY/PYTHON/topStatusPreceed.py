@@ -13,12 +13,12 @@ while True:
     select_input = input(
         "How to Get Work Path:\n1 : Current Folder\n2 : Select one\n>>:")
     if select_input == "1":
-        logpath = os.path.split(os.path.abspath(__file__))[0] + "/status.csv"
+        logpath = os.path.split(os.path.abspath(__file__))[0] + r"\GeneralLogs\status.csv"
         break
     elif select_input == "2":
         root = tkinter.Tk()
         root.withdraw()
-        logpath = tk.askdirectory() + "/status.csv"
+        logpath = tk.askdirectory() + r"\status.csv"
         break
     else:
         print("Input 1 or 2")
@@ -36,6 +36,8 @@ df1 = pd.read_csv(logpath, sep="\t", encoding="utf_8_sig", header=None, parse_da
 
 df1.drop([1,3,4,6,7,8,9],inplace=True,axis=1)
 df1.rename(columns={0 : "sn", 2 : "dt", 5 : "status"},inplace=True)
+
+df1.dropna(inplace=True)
 
 replace_dic = {
     "开机": "Power up",
@@ -126,9 +128,9 @@ df1.drop("dt_n",inplace=True,axis=1)
 
 df1.reset_index(inplace=True,drop=True)
 
-df1.to_csv(r"D:\Sync_ColorCloud\LogAnalysis\TOP working status analyis\status_ecg.csv")
+df1.to_csv(r"D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\weeklyReport\Data\GeneralLogs\status_ecg.csv")
 
-print("status_ecg.csv has been created at: \nD:\Sync_ColorCloud\LogAnalysis\TOP working status analyis\status_ecg.csv")
+print("D:\Sync_ColorCloud\LogAnalysis\AllWerfenChinaTop\weeklyReport\Data\GeneralLogs\status_ecg.csv")
 
 spent_time =  datetime.datetime.now() - dt_start
 print(spent_time)
