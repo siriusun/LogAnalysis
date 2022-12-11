@@ -110,6 +110,7 @@ replace_dic = {
 Filter_List_sDescription = [
     "Analyzer Status changed from Busy to Emergency stop.",
     "Analyzer Status changed from Busy to Controlled stop.",
+    "Analyzer Status changed from Controlled stop to Error.",
     "Analyzer Status changed from Controlled stop to Emergency stop.",
     "Analyzer Status changed from Initializing to Emergency stop.",
     "Analyzer Status changed from Initializing to Error.",
@@ -251,7 +252,7 @@ for i in range(len(loglist)):
         continue
     logonefile = pd.concat([logonefile, logtemp])
 
-logonefile = logonefile[logonefile.sCode != "'03046"]
+#logonefile = logonefile[logonefile.sCode != "'03046"]
 logonefile["Timediff"] = (
     pd.to_datetime(logonefile["dateTimeSQ"]) -
     pd.to_datetime(logonefile["dateTime"])) / pd.Timedelta("1s")
