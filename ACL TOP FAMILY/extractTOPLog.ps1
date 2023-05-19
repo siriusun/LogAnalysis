@@ -1,4 +1,6 @@
-#ACL TOP log export tool 5.0 2021/04/30 14:41
+#ACL TOP log export tool 5.0
+# Update log
+# 2023-05-19 add tasklist export
 
 Function Get-FileName {  
     #[System.Reflection.Assembly]::Load("System.Windows.Forms") | Out-Null
@@ -123,7 +125,7 @@ While (1) {
     #Select the log type
     "`n`n"
     write-host "Select logs to Generate:" -ForegroundColor Yellow -BackgroundColor Black
-    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : sw_all_versions`n5 : Quit"
+    "1 : GeneralLog`n2 : CountersForAllTest`n3 : InstrumentStatusStatistics`n4 : sw_all_versions`n5 : taskList`n6 : Quit"
     $Select = read-host ">>"
 
     #define the keyword to generate log
@@ -140,6 +142,9 @@ While (1) {
         $LogTxt = "sw_all_versions.txt"
     }
     elseif ($Select -eq 5) {
+        $LogTxt = "TASKLIST.txt"
+    }
+    elseif ($Select -eq 6) {
         break
     }
     else {
@@ -148,7 +153,7 @@ While (1) {
     }
 
     #create the logtype hashtable
-    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"; "4" = "SoftwareVersions"}
+    $SelectTable = @{"1" = "GeneralLogs"; "2" = "CountersForAllTest"; "3" = "InstrumentStatus"; "4" = "SoftwareVersions"; "5" = "taskList"}
     $txt_toplog_folder = $SelectTable[$Select]
 
     #create the output folder
@@ -169,7 +174,7 @@ While (1) {
         "-" * 100
         $toplog_DBX = (Get-ChildItem -Recurse -Path ($work_pth + "\SourceLogs\") -Filter ("*" + $Sn + "*DBX*.zip") | Sort-Object -Descending)[0]
         Write-Host (">>>>: " + ($sn_hashtable.Count - $Step2).ToString() + "  " + $toplog_DBX.FullName) -BackgroundColor Black -ForegroundColor Yellow
-        $toplog_date_SN = "T" + $Sn + "_" + $toplog_DBX.Name.Split("_")[7] + ".txt"
+        $toplog_date_SN = $toplog_DBX.Name.Split("_")[7] + "_" + $Sn + ".txt"
 
         #7z decompress the DBX file to txt_toplog_folder
         7z.exe e $toplog_DBX.FullName -pfixmeplease $text_toplog_fullpath $LogTxt -aos
@@ -187,7 +192,7 @@ While (1) {
         $txt_toplogs = Get-ChildItem -Path ($work_pth + "\$txt_toplog_folder") -Filter *.txt
         foreach ($txt_toplog in $txt_toplogs) {
             $txt_toplog.FullName.ToString()
-            Rename-Item -Path $txt_toplog.FullName ($txt_toplog.Name.Split("_")[0] + ".txt")
+            Rename-Item -Path $txt_toplog.FullName ("T" + $txt_toplog.Name.Split("_")[1])
         }
     }
 }
