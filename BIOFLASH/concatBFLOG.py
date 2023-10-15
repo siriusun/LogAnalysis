@@ -18,7 +18,7 @@ def param_to_list(param):
 def to_hex(df):
     if df.hexLocation != -1:
         hex_index = int(df.hexLocation)
-        df.Parameters[hex_index] = str(hex(int(df.Parameters[hex_index])))
+        df.Parameters[hex_index] = "0x" + str(hex(int(df.Parameters[hex_index]))[2:].zfill(2))
     return df
 
 def file_filter(filedir, keyword):
