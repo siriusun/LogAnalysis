@@ -71,6 +71,8 @@ for bf_log in bf_logs:
 
 dfall= pd.concat(bf_log_list)
 
+dfall.drop_duplicates(subset=["DateTime", "ResourceId", "SN"], inplace=True, keep="first")
+
 dfall["Parameters"] = dfall.Parameters.map(strlist)
 
 dfall["Type"] = dfall.Type.map(code_type)
