@@ -39,6 +39,7 @@ if ($null -eq $TcaLogs){
     [System.Console]::ReadKey() | Out-Null ; Exit
 }
 
+$log_name_is_correct = 1
 foreach ($TcaLog in $TcaLogs){
     if ($TcaLog.Name -notmatch "^TCA_H\d\d\d_\w+_\w{2,3}_2(3|4|5)(0[1-9]|1[0-2])(0[1-9]|1\d|2[0-9]|3[01])\.(zip|ZIP|rar|RAR|7z|7Z)$"){
         $logname = $TcaLog.Name
@@ -46,9 +47,13 @@ foreach ($TcaLog in $TcaLogs){
         Write-Host "Please using standard format to name the TCA log:" -ForegroundColor Yellow
         Write-Host $logname -ForegroundColor Red
         Write-Host "Standard format: TCA_流水线短号_医院中文标准名称_姓名_六位日期.rar/zip/7z" -ForegroundColor Yellow
-        Write-Host "Any key to exit..." -ForegroundColor Yellow
-        [System.Console]::ReadKey() | Out-Null ; Exit
+        $log_name_is_correct = 0
     }
+}
+if ($log_name_is_correct -eq 0){
+    "`n"
+    Write-Host "Any key to exit..."
+    [System.Console]::ReadKey() | Out-Null ; Exit
 }
 
 #创建Log日志文件夹字典, $Folder_Lists 是需要导出每天的，$Folder_Lists_forOneFile 是需要导出体积最大日志中的个别文档的；
