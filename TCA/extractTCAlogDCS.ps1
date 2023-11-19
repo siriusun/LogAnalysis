@@ -47,7 +47,7 @@ foreach($TcaLog in $TcaLogs){
     "-" * 100
     #解压所有的日志到TcaLogTemp
     $7zCom = "-o" + $Pth + "\TcaLogTemp\"
-    7z.exe e $TcaLog.FullName $7zCom -r *.zip
+    &"tools\7z.exe" e $TcaLog.FullName $7zCom -r *.zip
     "-" * 100
     $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
 
@@ -80,7 +80,7 @@ foreach($TcaLog in $TcaLogs){
             "`n"
             Write-Host ("Start to Extract $Folder_List in: " + $ZipLog.Name.ToString()) -BackgroundColor Black -ForegroundColor Yellow
             $7zComTxt = "-o" + $Pth + "\" + $Folder_List + "\"
-            7z.exe e  $ZipLog.FullName $7zComTxt $Folder_Lists[$Folder_List]
+            &"tools\7z.exe" e  $ZipLog.FullName $7zComTxt $Folder_Lists[$Folder_List]
             #获取需要命名的日志，只有未命名的日志才会被执行，如需后加内容，要注意$Folder_Lists与$Folder_Lists_forOneFile中关键词设置，小心*？号使用，确保过滤准确
             $ToRenameLogs = Get-ChildItem -Recurse -Path ($Pth + "\" + $Folder_List) -Filter $Folder_Lists[$Folder_List]
             if ($null -eq $ToRenameLogs) {
@@ -104,7 +104,7 @@ foreach($TcaLog in $TcaLogs){
         "`n"
         Write-Host ("Start to Extract $Folder in:  " + $theOneZip.Name.ToString()) -BackgroundColor Black -ForegroundColor Yellow
         $7zComTxt = "-o" + $Pth + "\" + $Folder + "\"
-        7z.exe e  $theOneZip.FullName $7zComTxt $Folder_Lists_forOneFile[$Folder]
+        &"tools\7z.exe" e  $theOneZip.FullName $7zComTxt $Folder_Lists_forOneFile[$Folder]
         $ToRenameLog = Get-ChildItem -Recurse -Path ($Pth + "\" + $Folder)  -Filter $Folder_Lists_forOneFile[$Folder]
         if ($null -eq $ToRenameLogs) {
             continue
@@ -116,7 +116,7 @@ foreach($TcaLog in $TcaLogs){
     "-" * 100
     "`n`n"
     #将导出的日志打包，可以直接用文件夹名称列表将所需打包文件夹包含进来
-    7z a -tzip $TcaLog.Name $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
+    &"tools\7z.exe" a -tzip $TcaLog.Name $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
 }
 
 Remove-Folder("TcaLogTemp")
