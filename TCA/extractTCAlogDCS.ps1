@@ -50,9 +50,12 @@ foreach($TcaLog in $TcaLogs){
     $TcaDayLogs = Get-ChildItem -Path ($Pth.ToString() + "\TcaLogTemp\") *zip
 
     #将一条流水线的解压出来的临时日志加上流水线大号/医院信息转存至TcaLogs
+    $count = 1
     foreach ($TcaDayLog in $TcaDayLogs) {
-        $NewName = $Pth.ToString() + "\TcaLogs\" + $TcaLog.Name.Split(".")[0] + "_" + $TcaDayLog.Name.Split("_")[0] + "_" + $TcaDayLog.Name.Split("_")[1] + ".zip"
+        $NewName = $Pth.ToString() + "\TcaLogs\" + $TcaLog.Name.Split(".")[0] + "_" + $TcaDayLog.Name.Split("_")[0] + "_" + $TcaDayLog.Name.Split("_")[1] + $count.ToString() + ".zip"
+        Write-Host "Move log: $NewName"
         Move-Item -Path $TcaDayLog.FullName -Destination $NewName
+        $count ++
     }
 
     #创建Log输出文件夹
