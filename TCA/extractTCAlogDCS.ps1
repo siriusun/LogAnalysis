@@ -33,6 +33,12 @@ function Remove-Folder ($FolderName){
 #获取Downloads文件夹中日志压缩包列表
 $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -in ".zip", ".rar", ".7z" } | Sort-Object -Descending
 
+if ($null -eq $TcaLogs){
+    "`n"
+    Write-Host "Please put TCA Log in DownloadLogs folder. Any key to exit..." -ForegroundColor Red
+    [System.Console]::ReadKey() | Out-Null ; Exit
+}
+
 #创建Log日志文件夹字典, $Folder_Lists 是需要导出每天的，$Folder_Lists_forOneFile 是需要导出体积最大日志中的个别文档的；
 #需要增加日志文档导出，只要在这里设置好文件夹名称与检索关键词即可，*？使用要合理设置，仔细检查
 $Folder_Lists = @{"TCActions" = "?ctions?og*.txt"; "ErrorMsg" = "?rror?essage*.txt"; "BypassTag" = "M21*ACLT_TAG.log"; "LasStatistics" = "LasStatistics.txt"}
