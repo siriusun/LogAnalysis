@@ -39,6 +39,17 @@ if ($null -eq $TcaLogs){
     [System.Console]::ReadKey() | Out-Null ; Exit
 }
 
+foreach ($TcaLog in $TcaLogs){
+    if ($TcaLog.Name -notmatch "^TCA_H\d\d\d_\w+_\w{2,3}_2(3|4|5)(0[1-9]|1[0-2])(0[1-9]|1\d|2[0-9]|3[01])\.(zip|ZIP|rar|RAR|7z|7Z)$"){
+        $logname = $TcaLog.Name
+        "`n"
+        Write-Host "Please using standard format to name the TCA log: $logname" -ForegroundColor Yellow
+        Write-Host "Standard format: TCA_流水线短号_医院中文标准名称_姓名_六位日期.rar/zip/7z" -ForegroundColor Red
+        Write-Host "Any key to exit..." -ForegroundColor Yellow
+        [System.Console]::ReadKey() | Out-Null ; Exit
+    }
+}
+
 #创建Log日志文件夹字典, $Folder_Lists 是需要导出每天的，$Folder_Lists_forOneFile 是需要导出体积最大日志中的个别文档的；
 #需要增加日志文档导出，只要在这里设置好文件夹名称与检索关键词即可，*？使用要合理设置，仔细检查
 $Folder_Lists = @{"TCActions" = "?ctions?og*.txt"; "ErrorMsg" = "?rror?essage*.txt"; "BypassTag" = "M21*ACLT_TAG.log"; "LasStatistics" = "LasStatistics.txt"}
