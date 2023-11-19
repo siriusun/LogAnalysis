@@ -30,9 +30,11 @@ function Remove-Folder ($FolderName){
     }   
 }
 
+#获取Downloads文件夹中日志压缩包列表
 $TcaLogs = Get-ChildItem -Path ($Pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Extension -in ".zip", ".rar", ".7z" } | Sort-Object -Descending
 
-#创建Log日志文件夹list
+#创建Log日志文件夹字典, $Folder_Lists 是需要导出每天的，$Folder_Lists_forOneFile 是需要导出体积最大日志中的个别文档的；
+#需要增加日志文档导出，只要在这里设置好文件夹名称与检索关键词即可，*？使用要合理设置，仔细检查
 $Folder_Lists = @{"TCActions" = "?ctions?og*.txt"; "ErrorMsg" = "?rror?essage*.txt"; "BypassTag" = "M21*ACLT_TAG.log"; "LasStatistics" = "LasStatistics.txt"}
 $Folder_Lists_forOneFile = @{"TCAInfo" = "Controller_systeminfo.txt"; "LasConf" = "LasConf.ini"; "SWVersions" = "Versions.txt"}
 
@@ -66,18 +68,20 @@ foreach($TcaLog in $TcaLogs){
         New-Folder($Folder)
     }
 
+    #获取TcaLogs中已命名好的日志压缩包
     $LogsFileZips = Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip
 
     $flag = 0
     foreach ($ZipLog in $LogsFileZips) {
         "-" * 100
 
-        #7z命令如下：
+        #根据$Folder_Lists中关键词内容，分别提取每天TCA日志中相应文档，保存至相应文件夹并命名
         foreach ($Folder_List in $Folder_Lists.Keys){
             "`n"
             Write-Host ("Start to Extract $Folder_List in: " + $ZipLog.Name.ToString()) -BackgroundColor Black -ForegroundColor Yellow
             $7zComTxt = "-o" + $Pth + "\" + $Folder_List + "\"
             7z.exe e  $ZipLog.FullName $7zComTxt $Folder_Lists[$Folder_List]
+            #获取需要命名的日志，只有未命名的日志才会被执行，如需后加内容，要注意$Folder_Lists与$Folder_Lists_forOneFile中关键词设置，小心*？号使用，确保过滤准确
             $ToRenameLogs = Get-ChildItem -Recurse -Path ($Pth + "\" + $Folder_List) -Filter $Folder_Lists[$Folder_List]
             if ($null -eq $ToRenameLogs) {
                 continue
@@ -95,7 +99,7 @@ foreach($TcaLog in $TcaLogs){
     $theOneZip = (Get-ChildItem -Recurse -Path ($Pth.ToString() + "\TcaLogs\") -Filter *.zip | Sort-Object  -Property Length -Descending)[0]
     "-" * 100
 
-    #7z命令如下：
+    #根据$Folder_Lists_forOneFile中关键词内容，提取最大的那个TCA日志中相应文档，保存至相应文件夹并命名
     foreach ($Folder in $Folder_Lists_forOneFile.Keys){
         "`n"
         Write-Host ("Start to Extract $Folder in:  " + $theOneZip.Name.ToString()) -BackgroundColor Black -ForegroundColor Yellow
@@ -111,6 +115,7 @@ foreach($TcaLog in $TcaLogs){
     }      
     "-" * 100
     "`n`n"
+    #将导出的日志打包，可以直接用文件夹名称列表将所需打包文件夹包含进来
     7z a -tzip $TcaLog.Name $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
 }
 
