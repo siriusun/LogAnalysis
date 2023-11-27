@@ -41,7 +41,7 @@ if ($null -eq $TcaLogs){
 
 $log_name_is_correct = 1
 foreach ($TcaLog in $TcaLogs){
-    if ($TcaLog.Name -notmatch "^TCA_H\d\d\d_\w+_\w{2,3}_2(3|4|5)(0[1-9]|1[0-2])(0[1-9]|1\d|2[0-9]|3[01])\.(zip|ZIP|rar|RAR|7z|7Z)$"){
+    if ($TcaLog.Name -notmatch "^TCA_H\d\d\d_[一-龟]+_[一-龟]{2,3}_2(3|4|5)(0[1-9]|1[0-2])(0[1-9]|1\d|2[0-9]|3[01])\.(zip|ZIP|rar|RAR|7z|7Z)$"){
         $logname = $TcaLog.Name
         "`n"
         Write-Host "Please using standard format to name the TCA log:" -ForegroundColor Yellow
