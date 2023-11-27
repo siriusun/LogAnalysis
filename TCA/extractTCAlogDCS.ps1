@@ -46,7 +46,6 @@ foreach ($TcaLog in $TcaLogs){
         "`n"
         Write-Host "Please using standard format to name the TCA log:" -ForegroundColor Yellow
         Write-Host $logname -ForegroundColor Red
-        Write-Host "Standard format: TCA_流水线短号_医院中文标准名称_姓名_六位日期.rar/zip/7z" -ForegroundColor Yellow
         $log_name_is_correct = 0
     }
 }
@@ -139,7 +138,7 @@ foreach($TcaLog in $TcaLogs){
     "-" * 100
     "`n`n"
     #将导出的日志打包，可以直接用文件夹名称列表将所需打包文件夹包含进来
-    &"tools\7z.exe" a -tzip $TcaLog.Name $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
+    &"tools\7z.exe" a -tzip ("mini" + $TcaLog.Name) $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
 }
 
 Remove-Folder("TcaLogTemp")
