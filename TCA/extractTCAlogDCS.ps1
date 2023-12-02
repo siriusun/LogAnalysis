@@ -138,7 +138,7 @@ foreach($TcaLog in $TcaLogs){
     "-" * 100
     "`n`n"
     #将导出的日志打包，可以直接用文件夹名称列表将所需打包文件夹包含进来
-    &"tools\7z.exe" a -tzip ("mini" + $TcaLog.Name) $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
+    &"tools\7z.exe" a -tzip ("mini" + $TcaLog.BaseName) $Folder_Lists.Keys $Folder_Lists_forOneFile.Keys
 }
 
 Remove-Folder("TcaLogTemp")
