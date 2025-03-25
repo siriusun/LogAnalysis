@@ -117,14 +117,16 @@ function Get-LogTypeInfo {
 
 function Show-Menu {
     Write-Host "`nSelect logs to Generate (input multiple numbers without spaces, e.g. 123):" -ForegroundColor Yellow -BackgroundColor Black
-    Write-Host "1 : GeneralLog"
-    Write-Host "2 : sw_all_versions"
-    Write-Host "3 : taskList"
-    Write-Host "4 : CountersForAllTest"
-    Write-Host "5 : InstrumentStatusStatistics"
-    Write-Host "6 : globalDefinitions"
-    Write-Host "7 : HIL"
-    Write-Host "8 : Quit"
+    
+    $logTypes = Get-LogTypeInfo
+    
+    # Display all log type options dynamically
+    foreach ($key in $logTypes.Keys | Sort-Object) {
+        Write-Host "$key : $($logTypes[$key].name)"
+    }
+    
+    # Add exit option
+    Write-Host "0 : Quit"
 }
 
 function Invoke-LogExtraction {
@@ -193,7 +195,7 @@ function Invoke-LogExtraction {
         # 显示已有的键以帮助调试
         Write-Host "  Available keys: $($logTypes.Keys -join ', ')" -ForegroundColor DarkGray
     
-        if ($keyStr -ne '8' -and $logTypes.ContainsKey($keyStr)) {
+        if ($keyStr -ne '0' -and $logTypes.ContainsKey($keyStr)) {
             Write-Host "  + Adding log type: $($logTypes[$keyStr].name)" -ForegroundColor Green
             $selectedLogTypes += $logTypes[$keyStr]
         }
@@ -356,14 +358,19 @@ while ($true) {
     Show-Menu
     $selections = Read-Host ">>"
 
-    if ($selections -match '^[1-8]+$') {
-        if ($selections.Contains('8')) {
+    # Get the list of valid keys dynamically
+    $logTypes = Get-LogTypeInfo
+    $validKeys = ($logTypes.Keys + @("0")) -join ""
+    $validPattern = "^[$validKeys]+$"
+
+    if ($selections -match $validPattern) {
+        if ($selections.Contains('0')) {
             break
         }
         Invoke-LogExtraction -selections $selections -work_pth $work_pth
     }
     else {
-        Write-Host "Please input valid numbers (1-8)" -ForegroundColor Red
+        Write-Host "Please input valid numbers (0-$($logTypes.Keys | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum))" -ForegroundColor Red
     }
 }
 
