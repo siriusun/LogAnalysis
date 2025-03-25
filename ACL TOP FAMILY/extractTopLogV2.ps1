@@ -52,7 +52,7 @@ Write-Host
 Write-Host "Starting to decompress Source TopLogs?" -ForegroundColor Yellow -BackgroundColor Black
 $flag = Read-Host "Y/y for start from DownloadLogs, N/n for SourceLogs"
 if ($flag -eq "Y" -or $flag -eq "y") {
-    $checklogs = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") -Recurse | Where-Object { $_.Extension -like ".rar" -or $_.Extension -like ".zip" -or $_.Extension -like ".7z" }
+    $checklogs = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") -Recurse -Include *.rar, *.zip, *.7z
     if ($null -eq $checklogs) {
         "No log files found. Any Key to Exit..."
         [System.Console]::ReadKey() | Out-Null ; Exit
@@ -68,7 +68,7 @@ if ($flag -eq "Y" -or $flag -eq "y") {
         }
     }
     
-    $source_log_packages = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") | Where-Object { $_.Name -notcontains "DBX" }
+    $source_log_packages = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") -Recurse -Include *.rar, *.zip, *.7z | Where-Object { $_.Name -notcontains "DBX" }
     $Step1 = 0
     foreach ($source_log_package in $source_log_packages) {
         "-" * 100
