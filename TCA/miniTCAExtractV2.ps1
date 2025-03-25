@@ -1,4 +1,4 @@
-#此脚本用于批量提取miniTCA日志 2023/12/01
+#此脚本用于批量提取miniTCA日志 2025-03-25
 
 $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
@@ -124,7 +124,7 @@ while (1) {
     # 获取所有压缩文件
     $compressedExtensions = @(".zip", ".rar", ".7z")
     $LogsFileZips = Get-ChildItem -Recurse -Path (Join-Path -Path $Pth -ChildPath "DownloadLogs") | 
-                    Where-Object { $_.Extension -in $compressedExtensions }
+    Where-Object { $_.Extension -in $compressedExtensions }
     
     if ($LogsFileZips.Count -eq 0) {
         Write-Host "No compressed files found in the DownloadLogs directory!" -ForegroundColor Red
@@ -141,14 +141,14 @@ while (1) {
         $progressPercentage = [int](($progress / $totalArchives) * 100)
         
         Write-Progress -Activity "Extracting Logs" -Status "Processing archive $progress of $totalArchives" `
-                      -PercentComplete $progressPercentage
+            -PercentComplete $progressPercentage
         
         # 显示当前处理的压缩文件
         Write-Host ("-" * 80) -ForegroundColor DarkGray
         Write-Host "Processing: $(Split-Path $ZipLog.FullName -Leaf) [$progress/$totalArchives]" -ForegroundColor Yellow
         
         # 对每种日志类型进行处理
-        foreach ($i in 0..($LogPatterns.Count-1)) {
+        foreach ($i in 0..($LogPatterns.Count - 1)) {
             $LogTxt = $LogPatterns[$i]
             $LogFoldName = $FolderNames[$i]
             
