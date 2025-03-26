@@ -50,7 +50,11 @@ Write-Host
 *************************************************************`n`n"
 
 Write-Host "Starting to decompress Source TopLogs?" -ForegroundColor Yellow -BackgroundColor Black
-$flag = Read-Host "Y/y for start from DownloadLogs, N/n for SourceLogs"
+Write-Host "Y/y for start from " -NoNewline
+Write-Host "DownloadLogs" -ForegroundColor Black -BackgroundColor Yellow -NoNewline
+Write-Host ", N/n for " -NoNewline
+Write-Host "SourceLogs" -ForegroundColor Black -BackgroundColor Yellow -NoNewline
+$flag = Read-Host " >>"
 if ($flag -eq "Y" -or $flag -eq "y") {
     $checklogs = Get-ChildItem -Path ($work_pth.ToString() + "\DownloadLogs\") -Recurse -Include *.rar, *.zip, *.7z
     if ($null -eq $checklogs) {
