@@ -1,4 +1,4 @@
-#此脚本用于批量提取miniTCA日志 2025-03-25
+#此脚本用于批量提取miniTCA日志 2023/12/01
 
 $Pth = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $Pth
@@ -46,7 +46,16 @@ Write-Host
 Write-Host "Starting extract miniTcaLogs" -ForegroundColor Yellow -BackgroundColor Black
 "`n"
 
-$year_month = Read-Host "Input Year-Month Pattern (yyyy-mm) to filter, 0 for all logs "
+$year_month = $(Get-Date).AddMonths(-1).ToString("yyyy-MM")
+
+write-host "Default Year-Month Pattern: $year_month" -ForegroundColor Yellow
+
+$patter_check = Read-Host "y for default, any other key to input a new pattern" 
+
+if ($patter_check -notin "y", "Y") {
+    $year_month = Read-Host "Input Year-Month Pattern (yyyy-mm) to filter, 0 for all logs "
+}
+
 
 if ($year_month -eq "0") {
     $year_month = "*"
