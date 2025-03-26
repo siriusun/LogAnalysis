@@ -371,10 +371,11 @@ function Invoke-LogExtraction {
             $sn = $nameParts[1]
             $dateTime = $nameParts[2]
         }
-        elseif ($nameParts.Length -ge 8 -and $nameParts[5] -eq "DBX") {
+        elseif ($nameParts.Length -ge 7 -and $toplog_DBX.Name -match "_DBX_") {
             # 格式1: CHINA_ACLTOP_700LAS_15120236_00000280000_DBX_15120236_2025-03-01_13-00-03_-480
-            $sn = $nameParts[6]
-            $dateTime = $nameParts[7]
+            $namepart_sa = $toplog_DBX.Name.Split("_DBX_")[1].Split("_")
+            $sn = $namepart_sa[0]
+            $dateTime = $namepart_sa[1]
         }
         else {
             Write-Host "无效的文件名格式: $($toplog_DBX.Name), 跳过..." -ForegroundColor Yellow

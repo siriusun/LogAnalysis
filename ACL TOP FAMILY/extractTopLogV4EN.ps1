@@ -371,10 +371,11 @@ function Invoke-LogExtraction {
             $sn = $nameParts[1]
             $dateTime = $nameParts[2]
         }
-        elseif ($nameParts.Length -ge 8 -and $nameParts[5] -eq "DBX") {
-            # Format 1: CHINA_ACLTOP_700LAS_15120236_00000280000_DBX_15120236_2025-03-01_13-00-03_-480
-            $sn = $nameParts[6]
-            $dateTime = $nameParts[7]
+        elseif ($nameParts.Length -ge 7 -and $toplog_DBX.Name -match "_DBX_") {
+            # 格式1: CHINA_ACLTOP_700LAS_15120236_00000280000_DBX_15120236_2025-03-01_13-00-03_-480
+            $namepart_sa = $toplog_DBX.Name.Split("_DBX_")[1].Split("_")
+            $sn = $namepart_sa[0]
+            $dateTime = $namepart_sa[1]
         }
         else {
             Write-Host "Invalid filename format: $($toplog_DBX.Name), skipping..." -ForegroundColor Yellow
