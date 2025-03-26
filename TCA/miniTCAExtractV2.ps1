@@ -48,7 +48,8 @@ Write-Host "Starting extract miniTcaLogs" -ForegroundColor Yellow -BackgroundCol
 
 $year_month = $(Get-Date).AddMonths(-1).ToString("yyyy-MM")
 
-write-host "Default Year-Month Pattern: $year_month" -ForegroundColor Yellow
+write-host "Default Year-Month Pattern: " -NoNewline
+write-host $year_month -ForegroundColor Black -BackgroundColor Yellow
 
 $patter_check = Read-Host "y for default, any other key to input a new pattern" 
 
