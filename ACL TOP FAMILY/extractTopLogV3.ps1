@@ -230,10 +230,11 @@ function Invoke-LogExtraction {
             $sn = $nameParts[1]
             $dateTime = $nameParts[2]
         }
-        elseif ($nameParts.Length -ge 8 -and $nameParts[5] -eq "DBX") {
+        elseif ($nameParts.Length -ge 7 -and $toplog_DBX.Name -match "_DBX_") {
             # 格式1: CHINA_ACLTOP_700LAS_15120236_00000280000_DBX_15120236_2025-03-01_13-00-03_-480
-            $sn = $nameParts[6]
-            $dateTime = $nameParts[7]
+            $namepart_sa = $toplog_DBX.Name.Split("_DBX_")[1].Split("_")
+            $sn = $namepart_sa[0]
+            $dateTime = $namepart_sa[1]
         }
         else {
             Write-Host "无法识别的文件名格式: $($toplog_DBX.Name), 跳过..." -ForegroundColor Yellow
@@ -427,10 +428,10 @@ function Invoke-LogExtraction {
         
         # 创建新作业，传递所有必要的参数
         $job = Start-Job -ScriptBlock $scriptBlock -ArgumentList @(
-            $toplog_DBX.FullName,  # 传递文件路径而不是文件对象
-            $work_pth,             # 工作目录
-            $simpleLogTypes,       # 简化的日志类型数组
-            $jobIndex,             # 作业索引
+            $toplog_DBX.FullName, # 传递文件路径而不是文件对象
+            $work_pth, # 工作目录
+            $simpleLogTypes, # 简化的日志类型数组
+            $jobIndex, # 作业索引
             $totalDBXCount         # 总文件数
         )
         $jobs += $job
