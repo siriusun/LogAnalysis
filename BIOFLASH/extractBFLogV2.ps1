@@ -102,7 +102,7 @@ if ($flag -eq "Y" -or $flag -eq "y") {
         
         try {
             # 一次提取所有需要的文件（减少IO操作）
-            $extractCmd = "7z.exe e `"$packagePath`" -o`"$packageTempDir`" -r -ir!`"InstrumentLog.txt`" -ir!`"*Report*htm`" -aos"
+            $extractCmd = "7z.exe e `"$packagePath`" -o`"$packageTempDir`" -ir!`"InstrumentLog.*`" -ir!`"*Report*htm`" -aos"
             Invoke-Expression $extractCmd | Out-Null
             
             # 处理InstrumentLog文件
