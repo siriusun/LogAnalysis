@@ -21,7 +21,7 @@ import numpy as np
 
 # =================== 配置部分 ===================
 # 日志保留天数: 0表示保留所有日志
-PERIOD = 60
+PERIOD = 0
 # 是否去除首尾两月数据
 DROP_HEAD_TAIL = False
 # 是否删除ES/IES之外的所有记录（轻量模式）
@@ -362,7 +362,7 @@ def save_to_database(df, db_config):
             try:
                 cur.executemany(
                     """
-                    INSERT INTO service.tophc_genlog 
+                    INSERT INTO service.topsta_genlog 
                     (topsn, scode, etype, datetime, funcarea, sdesc, filename, subcode, ecpu, 
                     scodesq, sdescsq, timediff, timediff2s) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
@@ -379,7 +379,7 @@ def save_to_database(df, db_config):
                     try:
                         cur.execute(
                             """
-                            INSERT INTO service.tophc_genlog 
+                            INSERT INTO service.topsta_genlog 
                             (topsn, scode, etype, datetime, funcarea, sdesc, filename, subcode, ecpu, 
                             scodesq, sdescsq, timediff, timediff2s) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
@@ -498,8 +498,8 @@ def main():
 
         # 重新组织列
         combined_log.drop(["dateTimeSQ"], axis=1, inplace=True)
-        combined_log.insert(0, "TopSn", combined_log.pop("TopSn"))
-        combined_log["log_days"] = PERIOD
+        # combined_log.insert(0, "TopSn", combined_log.pop("TopSn"))
+        # combined_log["log_days"] = PERIOD
 
         # 如果启用轻量模式, 进一步过滤数据
         if LIGHT_MODE:
