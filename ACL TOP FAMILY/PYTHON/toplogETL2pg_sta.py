@@ -274,7 +274,8 @@ def process_log_file(log_file, log_path, filter_col, log_days, encoding):
             log_with_seq = log_with_seq[log_with_seq.log_days]
 
         # 添加TopSn列
-        log_with_seq["TopSn"] = "T" + log_file.split("_")[0]
+        # log_with_seq["TopSn"] = "T" + log_file.split("_")[0] ----------与TOPStandalone不符, 需要修改
+        log_with_seq["TopSn"] = log_file.split("_")[0]
 
         return log_with_seq
 
@@ -363,7 +364,7 @@ def save_to_database(df, db_config):
                 cur.executemany(
                     """
                     INSERT INTO service.topsta_genlog 
-                    (topsn, scode, etype, datetime, funcarea, sdesc, filename, subcode, ecpu, 
+                    (topsn, scode, etype, datetime, funcarea, sdesc, sfilename, nsubcode, ecpu, 
                     scodesq, sdescsq, timediff, timediff2s) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
                     ON CONFLICT DO NOTHING
@@ -380,7 +381,7 @@ def save_to_database(df, db_config):
                         cur.execute(
                             """
                             INSERT INTO service.topsta_genlog 
-                            (topsn, scode, etype, datetime, funcarea, sdesc, filename, subcode, ecpu, 
+                            (topsn, scode, etype, datetime, funcarea, sdesc, sfilename, nsubcode, ecpu, 
                             scodesq, sdescsq, timediff, timediff2s) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
                             ON CONFLICT DO NOTHING
